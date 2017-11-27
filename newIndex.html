@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title> ML GoI Visualiser </title>
+		<link rel="stylesheet" href="./css/main.css">
+	</head>
+	<body>
+        <div id="left">
+            <div class="top-wrapper" align="center">
+                <div id="select-code">
+                    <select id="code-example">
+                        <option value="opt1">Option 1</option>
+                        <option value="opt2">Option 2</option>
+                        <option value="opt3">Option 3</option>
+                        <option value="opt4">Option 4</option>
+                    </select>
+                </div>
+                <div class="text-wrapper" align="center">
+                    <textarea id="code-input" spellcheck="false"></textarea>
+                </div>
+            </div>
+            <div class="bottom-wrapper">
+                <button class="all-buttons" id="run"><b>Graph</b></button>
+            </div>
+        </div>
+        <div id="right">
+            <div class="top-wrapper" align="center">
+                <div id="graph-wrapper">
+                    <div id="graph">
+                        <!-- to be filled with graph -->
+                    </div>
+                    <div id="graph-options">
+                        <form id="options" action="">
+                            <input type="radio" name="graph-display" value="hide-all"> Show all     
+                            <input type="radio" name="graph-display" value="show-all" checked="checked"> Hide all     
+                            <input type="radio" name="graph-display" value="interactive"> Interactive
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="bottom-wrapper" align="center">
+                <div id="control-buttons">
+                    <button class="all-buttons control-buttons" id="reload">&#11119</button>
+                    <button class="all-buttons control-buttons" id="back">&#8666</button>
+                    <button class="all-buttons control-buttons" id="play">&#9658</button>
+                    <button class="all-buttons control-buttons" id="pause"> &#9612&#9612</button>
+                    <button class="all-buttons control-buttons" id="forward">&#8667</button>
+                </div>
+            </div>
+        </div>
+	</body>
+</html>
