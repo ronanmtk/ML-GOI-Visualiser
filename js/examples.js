@@ -6,3 +6,5 @@ var fact_prog =
 + 'in\n'
 + '\n'
 + 'fact 4';
+
+var wrong_prog = 'let f = (λx. x + x) in f 5';

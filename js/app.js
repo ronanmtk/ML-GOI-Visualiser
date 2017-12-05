@@ -126,17 +126,16 @@ require(["jquery", "renderer", "goi-machine"],
 			pause();
 		});
     
-        $("btn-back").click(function(event) {
-            alert("test");
-            pause();
+        $("#btn-back").click(function(event) {
+			pause();
 			back();
-        });
+		});
     
         $("#btn-refresh").click(function(event) { //using for back until we can get it working
-			//clearGraph(function() {
+			clearGraph(function() {
                 pause();
-				draw(false);
-			//});
+				draw(true);
+			});
 		});
 
 		$("#btn-next").click(function(event) {

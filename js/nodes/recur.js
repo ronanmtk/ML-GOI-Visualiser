@@ -1,7 +1,7 @@
 class Recur extends Expo {
 
 	constructor() {
-		super(null, "rec");
+		super("doublecircle", "rec");
 		this.box = null;
 	}
 
@@ -45,20 +45,20 @@ class Recur extends Expo {
 			return nextLink;
 		}
 	}
-    
-    transform() {
-        for(let link of this.findLinksOutOf("e")) {
-            link.changeFrom(this.key, "n");
-        }
-        for(let link of this.findLinksInto("w")) {
-            link.changeTo(this.key, "e");
-        }
-        for(let link of this.findLinksInto("s")) {
-            link.changeTo(this.key, "w");
-        }
-    }
 
 	copy() {
 		return new Recur();
 	}
+    
+    duplicate(nodeMap, displayGraph) {
+        var newNode = this.copy();
+        nodeMap.set(this.key, newNode);
+        if(this.focus) newNode.changeFocus(true);
+        if(newNode != null) {
+            this.graph.removeNode(newNode);
+            newNode.addToGraph(displayGraph, this.key);
+            nodeMap.set(this.key, newNode);
+        }
+        return newNode;
+    }
 }

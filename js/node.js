@@ -7,6 +7,7 @@ class Node {
 		this.shape = shape;
 		this.text = text;
 		this.name = name; // identifier name or constant name if any
+        this.focus = false;
 		this.graph = null;
 		this.group = null;
 		this.width = null;
@@ -62,6 +63,22 @@ class Node {
 		newNode.height = this.height;
         return newNode;
 	}	
+    
+    duplicate(nodeMap, displayGraph) {
+        var newNode = this.copy();
+        nodeMap.set(this.key, newNode);
+        if(this.focus) newNode.changeFocus(true);
+        if(newNode != null) {
+            this.graph.removeNode(newNode);
+            newNode.addToGraph(displayGraph, this.key);
+            nodeMap.set(this.key, newNode);
+        }
+        return newNode;
+    }
+    
+    changeFocus(value) {
+        this.focus = value;
+    }
 
 	// also delete any connected links
 	delete() {
@@ -104,6 +121,8 @@ class Node {
 			str += ',width=' + this.width;
 		if (this.height != null)
 			str += ',height=' + this.height;
+        if (this.focus)
+            str += ',style=filled,color=green,fontcolor=white';
 		return str += '];'
 	}
 

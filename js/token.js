@@ -12,6 +12,15 @@ class MachineToken {
 			this.link.focus("red");
 		}
 	}
+    
+    setNode(node) {
+        if (this.node != null)
+			this.node.changeFocus(false);
+		this.node = node;
+		if (this.node != null) {
+			this.node.changeFocus(true);
+		}
+    }
 
 	reset() {
 		this.forward = true;
@@ -19,6 +28,7 @@ class MachineToken {
 		this.transited = false;
 		
 		this.link = null;
+        this.node = null;
 		
 		this.rewriteFlag = RewriteFlag.EMPTY;
 		this.dataStack = [CompData.PROMPT];

@@ -38,6 +38,18 @@ class Group extends Node {
 		}
 		return str;
 	}
+    
+    duplicate(nodeMap, displayGraph) {
+        var newGroup = new Group();
+        for(let node of this.nodes) {
+            var newNode = node.duplicate(nodeMap, displayGraph);
+            if(newNode) {
+                newNode.addToGroup(newGroup);
+            }
+        }
+        newGroup.addToGraph(displayGraph, this.key);
+        return newGroup;
+    }
 }
 
 // general box-ed subgraph
@@ -51,15 +63,31 @@ class Box extends Group {
 	copy(graph) {
 		// this shouldnt be call, since every box should be inside a wrapper
 	}	
+    
+    duplicate(nodeMap, displayGraph) {
+        var newGroup = new Box();
+        for(let node of this.nodes) {
+            var newNode = node.duplicate(nodeMap, displayGraph);
+            if(newNode) {
+                newNode.addToGroup(newGroup);
+            }
+        }
+        newGroup.addToGraph(displayGraph, this.key);
+        return newGroup;
+    }
 
 	draw(level) {
 		var str = "";
-		for (let node of this.nodes) {
-			str += node.draw(level + '  ');
-		}
-		return level + 'subgraph cluster_' + this.key + ' {' 
-			 + level + '  graph[style=dotted];'
-			 + str 
-			 + level + '};';
+        if(this.nodes.length > 0) {
+            for (let node of this.nodes) {
+                str += node.draw(level + '  ');
+            }
+            return level + 'subgraph cluster_' + this.key + ' {' 
+                 + level + '  graph[style=dotted];'
+                 + str 
+                 + level + '};';
+        } else {
+            return str;
+        }
 	}
 }

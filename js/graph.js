@@ -16,9 +16,6 @@ class Graph {
 
 	// give a key to a node and add it to allNodes
 	addNode(node, copyKey) { //copyKey for clean transitions with new drawing
-        /*node.key = 'nd' + this.key;
-        this.allNodes.set(node.key, node);
-        this.key++;*/
         if(!copyKey) {
             node.key = 'nd' + this.key;
 		    this.key++;
@@ -61,31 +58,20 @@ class Graph {
 	drawNext(width, height) {
         var displayGraph = new Graph();
         var nodeMap = new Map();
-        for(let node of this.allNodes.values()) {
-            if(!(node instanceof Group)) { //only want vanilla nodes
-                var newNode = node.copy();
-                this.removeNode(newNode);
-                if(newNode != null) {
-                    newNode.addToGraph(displayGraph, node.key);
-                    nodeMap.set(node.key, newNode); //map of old node to new node
-                }
-            } 
-        }
+        var groups = [];
+        displayGraph.child = this.child.duplicate(nodeMap, displayGraph);
         for(let link of this.allLinks) {
             var frm = nodeMap.get(link.from);
             var to = nodeMap.get(link.to);
             if(frm && to) {
                 var newLink = new Link(frm.key, to.key, link.fromPort, link.toPort, link.reverse, true);
-                if(link.hasFocus) newLink.focus("green");
                 newLink.addToGraph(displayGraph);
                 newLink.addToNode();
             }
         }
         displayGraph.transform();
         var str = '';
-        for(let node of displayGraph.allNodes.values()) {
-            str += node.draw('\n  ');
-        }
+        str += displayGraph.child.draw('\n  ')
         str += '\n';
         for (let link of displayGraph.allLinks) {
             str += link.draw('\n  ');

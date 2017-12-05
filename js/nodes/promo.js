@@ -59,10 +59,26 @@ class Promo extends Expo {
     
     //ONLY ever called on the display representation of the graph
     transform() {
+        if(this.focus) {
+            this.changeFocus(false);
+            this.graph.findNodeByKey(this.findLinksOutOf(null)[0].to).changeFocus(true);   
+        }
         this.deleteAndPreserveInLink();
     }
 
 	copy() {
 		return new Promo();
 	}
+    
+    duplicate(nodeMap, displayGraph) {
+        var newNode = this.copy();
+        nodeMap.set(this.key, newNode);
+        if(this.focus) newNode.changeFocus(true);
+        if(newNode != null) {
+            this.graph.removeNode(newNode);
+            newNode.addToGraph(displayGraph, this.key);
+            nodeMap.set(this.key, newNode);
+        }
+        return newNode;
+    }
 }

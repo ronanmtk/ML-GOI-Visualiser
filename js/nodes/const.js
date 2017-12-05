@@ -1,7 +1,7 @@
 class Const extends Node {
 
 	constructor(name) {
-		super(null, name, name);
+		super("square", name, name);
 	}
 	
 	transition(token, link) {
@@ -17,4 +17,15 @@ class Const extends Node {
 		return new Const(this.name);
 	}
     
+    duplicate(nodeMap, displayGraph) {
+        var newNode = this.copy();
+        nodeMap.set(this.key, newNode);
+        if(this.focus) newNode.changeFocus(true);
+        if(newNode != null) {
+            this.graph.removeNode(newNode);
+            newNode.addToGraph(displayGraph, this.key);
+            nodeMap.set(this.key, newNode);
+        }
+        return newNode;
+    }
 }

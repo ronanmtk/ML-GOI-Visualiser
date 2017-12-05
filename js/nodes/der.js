@@ -4,17 +4,18 @@ class Der extends Expo {
         if(name == undefined) {
             super(null, "D", name);
         } else {
-            super(null, name, name);   
+            super("hexagon", name, name);   
         }
 	}
 
     transform() {
         if(this.text == "D") {
+            if(this.focus) {
+                this.changeFocus(false);
+                this.graph.findNodeByKey(this.findLinksOutOf(null)[0].to).changeFocus(true);   
+            }
             this.deleteAndPreserveInLink();
         } else {
-            for(let link of this.findLinksOutOf(null)) {
-                link.changeFrom(this.key, "w");
-            }
             super.transform();
         }   
     }
@@ -29,6 +30,18 @@ class Der extends Expo {
 		der.text = this.text;
 		return der;
 	}
+    
+    duplicate(nodeMap, displayGraph) {
+        var newNode = this.copy();
+        nodeMap.set(this.key, newNode);
+        if(this.focus) newNode.changeFocus(true);
+        if(newNode != null) {
+            this.graph.removeNode(newNode);
+            newNode.addToGraph(displayGraph, this.key);
+            nodeMap.set(this.key, newNode);
+        }
+        return newNode;
+    }
 }
 
 class Var extends Der {

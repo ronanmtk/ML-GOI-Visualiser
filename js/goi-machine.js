@@ -186,7 +186,7 @@ class GoIMachine {
 				else
 					node = this.graph.findNodeByKey("nd1");
 
-
+                this.token.setNode(node);
 				this.token.rewrite = false;
 				var nextLink = node.transition(this.token, this.token.link);
 				if (nextLink != null) {
@@ -205,6 +205,7 @@ class GoIMachine {
 			else {
 				var target = this.token.forward ? this.token.link.from : this.token.link.to;
 				node = this.graph.findNodeByKey(target);
+                this.token.setNode(node);
 				var nextLink = node.rewrite(this.token, this.token.link);
 				if (!this.token.rewrite) {
 					this.token.transited = false;
@@ -216,6 +217,8 @@ class GoIMachine {
                         this.token.weakMade = false;
                     }
 					this.token.setLink(nextLink);
+                    target = this.token.forward ? this.token.link.from : this.token.link.to;
+				    this.token.setNode(this.graph.findNodeByKey(target));
 					this.printHistory(flag, dataStack, boxStack);
 				}
 			}
