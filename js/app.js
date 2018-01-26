@@ -10,7 +10,7 @@ var finished = false;
 var current = -1;
 var latest = -1;
 
-var isDraw = true;
+var hide = true;
 
 require(["jquery", "renderer", "goi-machine"],
 	function ($, renderer, machine) {
@@ -22,32 +22,35 @@ require(["jquery", "renderer", "goi-machine"],
 			setTimeout(callback, 100);
 		}
 
-		function draw(forward) {
+		function draw(change, forward) {
             var width = $("#graph").width();
             var height = $("#graph").height();
             // update stage with new dot source
             var result;
-            if(forward) {
-                if(current < latest) {
-                    current++;
-                    result = machine.graph.drawMid(width/dpi, height/dpi, current);
-                } else {
-                    if(!finished) {
-                        current++;
-                        latest++;
-                        result = machine.graph.drawNext(width/dpi, height/dpi);
-                    }
-                }
+            if(!change) {
+                result = machine.graph.drawMid(current, hide);
             } else {
-                if(current > 0) {
-                    current--;
-                    result = machine.graph.drawMid(width/dpi, height/dpi, current);
+                if(forward) {
+                    if(current < latest) {
+                        current++;
+                        result = machine.graph.drawMid(current, hide);
+                    } else {
+                        if(!finished) {
+                            current++;
+                            latest++;
+                            result = machine.graph.drawNext(width/dpi, height/dpi, hide);
+                        }
+                    }
+                } else {
+                    if(current > 0) {
+                        current--;
+                        result = machine.graph.drawMid(current, hide);
+                    }
                 }
             }
             if(result) {
                 $("#ta-graph").val(result);
-                if (isDraw)
-                    renderer.render(result);
+                renderer.render(result);
             }
 		}
 
@@ -59,7 +62,9 @@ require(["jquery", "renderer", "goi-machine"],
 				$("#boxStack").val("");
 				var source = $("#ta-program").val();
 				machine.compile(source);
-				draw(true);
+                current = -1;
+                latest = -1;
+				draw(true, true);
 				finished = false;
 			});
 		});
@@ -81,11 +86,15 @@ require(["jquery", "renderer", "goi-machine"],
 	        showKey = this.checked;
 	        $("#btn-refresh").click();       
    		 });
+    
+        $('input:radio[name="graph-display"]').change(function() {
+           hide = (this.value == "hide-detail");
+           clearGraph(function() {
+                pause();
+				draw(false);
+			});
+        });
 
-		$('#cb-draw').change(function() {
-	        isDraw = this.checked;
-	        $("#btn-refresh").click();       
-   		 });
 
 		$("#btn-play").click(function(event) {
 			play = true;
@@ -97,10 +106,7 @@ require(["jquery", "renderer", "goi-machine"],
 			playing = true;
 			next();
 			if (play)
-				if (isDraw)
-					setTimeout(autoPlay, 800);
-				else
-					setTimeout(autoPlay, 0);
+				setTimeout(autoPlay, 800);
 			else
 				playing = false;
 		}
@@ -111,14 +117,14 @@ require(["jquery", "renderer", "goi-machine"],
 		}
     
         function back() {
-            draw(false);
+            draw(true, false);
         }
 
 		function next() {
 			if (!finished && (current == latest)) {
 				while(!machine.pass($("#flag"), $("#dataStack"), $("#boxStack")));
             }
-            draw(true);
+            draw(true, true);
 
 		}
 
@@ -131,10 +137,10 @@ require(["jquery", "renderer", "goi-machine"],
 			back();
 		});
     
-        $("#btn-refresh").click(function(event) { //using for back until we can get it working
+        $("#btn-refresh").click(function(event) {
 			clearGraph(function() {
                 pause();
-				draw(true);
+				draw(false);
 			});
 		});
 

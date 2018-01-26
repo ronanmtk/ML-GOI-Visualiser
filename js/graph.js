@@ -51,11 +51,11 @@ class Graph {
         }
     }
     
-    drawMid(width, height, current) {
-        return this.graphStack[current];
+    drawMid(current, hide) {
+        return this.graphStack[current].display(hide);
     }
 
-	drawNext(width, height) {
+	drawNext(width, height, hide) {
         var displayGraph = new Graph();
         var nodeMap = new Map();
         var groups = [];
@@ -70,25 +70,9 @@ class Graph {
             }
         }
         displayGraph.transform();
-        var str = '';
-        str += displayGraph.child.draw('\n  ')
-        str += '\n';
-        for (let link of displayGraph.allLinks) {
-            str += link.draw('\n  ');
-        }
-        var graphDot = 'digraph G {'
-            //+'\n  rankdir=BT;'
-            +'\n  rankdir=LR;'
-            +'\n  edge[arrowhead=none,arrowtail=none];'
-            +'\n  node[fixedsize=true,shape=circle]'
-            +'\n  size="' + width + ',' + height + '";'
-            +'\n  labeldistance=0;'
-            +'\n  nodesep=.175;'
-            +'\n  ranksep=.175;'
-            +'\n' 
-            +     str 
-            +'\n}';
-        this.graphStack.push(graphDot);
-        return graphDot;
+
+        var snapshot = new GraphShot(displayGraph, width, height);
+        this.graphStack.push(snapshot);
+        return snapshot.display(hide);
 	}
 }

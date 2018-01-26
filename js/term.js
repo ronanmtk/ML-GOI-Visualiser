@@ -163,11 +163,11 @@ class BoxWrapper extends Term {
 		super.delete();
 	}
 
-	draw(level) {
+	draw(level, snapshot, subgraph, templateIndex) {
 		var str = "";
 		
 		for (let node of this.nodes) {
-			str += node.draw(level);
+			str += node.draw(level, snapshot, subgraph, templateIndex);
 		}
 		
 		return str;

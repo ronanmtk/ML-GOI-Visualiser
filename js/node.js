@@ -78,6 +78,7 @@ class Node {
     
     changeFocus(value) {
         this.focus = value;
+        if(this.group) this.group.open = true;
     }
 
 	// also delete any connected links
@@ -110,7 +111,8 @@ class Node {
         if(port == "nw") return "ne";
     }
 
-	draw(level) {
+	draw(level, snapshot, subgraph) {
+        subgraph.addInternalNode(this.key);
 		var str = level + this.key + '[label="' + this.text; 
 		if (showKey)
 			str += ':' + this.key;
@@ -122,7 +124,7 @@ class Node {
 		if (this.height != null)
 			str += ',height=' + this.height;
         if (this.focus)
-            str += ',style=filled,color=green,fontcolor=white';
+            str += ',style=filled,color=green3,fontcolor=white';
 		return str += '];'
 	}
 

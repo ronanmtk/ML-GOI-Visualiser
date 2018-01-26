@@ -30,7 +30,18 @@
     align-content: center;
 }
 
-#code-input {
+#sm-example {
+    width: 100%;
+    height: 100%;
+    border-radius:5px;
+    border-width:2px;
+    border-color:dimgrey;
+    font-family: Verdana, sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+#ta-program {
     height:100%;
     width:100%;
     padding: 1%;
@@ -49,7 +60,6 @@
 
 body {
     margin: 10px;
-    background-color: lightgray;
     overflow: hidden;
     height: 100%;
     max-height: 100%;
@@ -63,7 +73,7 @@ textarea {
     text-align: left;
 }
 
-#run {
+#btn-make-graph {
     width:100%;
     font-size:1rem;
     font-style:normal;
@@ -71,12 +81,16 @@ textarea {
     color:white;
 }
 
+#btn-make-graph:active {
+    background-color: darkslategrey;
+}
+
 #run:active {
     background-color: darkgreen;
 }
 
 .all-buttons:active {
-    background-color: darkgreen;
+    background-color: darkslategrey;
 }
 
 .options {
@@ -122,17 +136,6 @@ html {
     height: 15%;
 }
 
-#code-example {
-    width: 100%;
-    height: 100%;
-    border-radius:5px;
-    border-width:2px;
-    border-color:dimgrey;
-    font-family: Verdana, sans-serif;
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
 #graph-wrapper {
     width:100%;
     height:100%;
@@ -151,6 +154,8 @@ html {
     height: 90%;
     font-family: Verdana, sans-serif;
     border-radius: 5px;
+    border-width: thin;
+    border-color: darkslategrey;
     text-align: center;
     cursor: pointer;
 }
@@ -169,13 +174,15 @@ html {
     font-size: 1rem;
 }
 
-.control-buttons:active {
-    background-color: slategrey;
-}
 
-#play {
+
+#btn-play {
     background-color: green;
     color: white;
+}
+
+#btn-play:active {
+    background-color: darkslategrey;
 }
 
 #play:active {
@@ -259,3 +266,7 @@ html {
 
 
 
+
+.not-shown {
+    visibility: hidden;
+}

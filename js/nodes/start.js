@@ -30,11 +30,12 @@ class Start extends Node {
         return newNode;
     }
 
-	draw(level) {
+	draw(level, snapshot, subgraph) {
+        subgraph.addInternalNode(this.key);
         var str = '';
         str += (level + this.key + '[shape=' + this.shape);
         if(this.focus) {
-            str += ',style=filled,color=green,fontcolor=white';
+            str += ',style=filled,color=green3,fontcolor=white';
         }
 		str += '];'; 
         return str;

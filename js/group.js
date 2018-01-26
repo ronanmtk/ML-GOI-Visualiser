@@ -1,9 +1,10 @@
 // general group in a graph (subgraph)
 class Group extends Node {
-	constructor() {
+	constructor(opened) {
 		super(null, null, null); // shape, text, name
 		this.nodes = [];
 		this.links = []; // for copying
+        this.open = opened;
 	}
 
 	addNode(node) {
@@ -30,17 +31,17 @@ class Group extends Node {
 		}
 		super.delete();
 	}
-
-	draw(level) {
-		var str = "";
-		for (let node of this.nodes) {
-			str += node.draw(level);
-		}
-		return str;
-	}
+    
+    draw(level, snapshot, subgraph) {
+        var str = "";
+        for (let node of this.nodes) {
+            str += node.draw(level, snapshot, subgraph);
+        }
+        return str;
+    }
     
     duplicate(nodeMap, displayGraph) {
-        var newGroup = new Group();
+        var newGroup = new Group(this.open);
         for(let node of this.nodes) {
             var newNode = node.duplicate(nodeMap, displayGraph);
             if(newNode) {
@@ -54,8 +55,8 @@ class Group extends Node {
 
 // general box-ed subgraph
 class Box extends Group {
-	constructor() {
-		super();
+	constructor(opened) {
+		super(opened);
 		this.nodes = [];
 		this.links = [];
 	}
@@ -65,7 +66,7 @@ class Box extends Group {
 	}	
     
     duplicate(nodeMap, displayGraph) {
-        var newGroup = new Box();
+        var newGroup = new Box(this.open);
         for(let node of this.nodes) {
             var newNode = node.duplicate(nodeMap, displayGraph);
             if(newNode) {
@@ -76,18 +77,15 @@ class Box extends Group {
         return newGroup;
     }
 
-	draw(level) {
-		var str = "";
-        if(this.nodes.length > 0) {
-            for (let node of this.nodes) {
-                str += node.draw(level + '  ');
-            }
-            return level + 'subgraph cluster_' + this.key + ' {' 
-                 + level + '  graph[style=dotted];'
-                 + str 
-                 + level + '};';
-        } else {
-            return str;
+	draw(level, snapshot, subgraph) {
+        if(this.nodes.length > 1) {
+            var groupIndex = snapshot.highIndex;
+            snapshot.groupAdded();
+            var grp = new ClosableGroup(level, snapshot, groupIndex, this);
+            subgraph.children.set(groupIndex, grp);
+            return "%%%"+groupIndex;
+        } else if (this.nodes.length == 1) {
+            return this.nodes[0].draw(level, snapshot, subgraph);
         }
 	}
 }
