@@ -64,6 +64,13 @@ class IfThenElse {
   }
 }
 
+class Pair {
+  constructor(fst, snd) {
+    this.fst = fst;
+    this.snd = snd;
+  }
+}
+
 class Recursion {
   constructor(p1, p2, body) {
     this.p1 = p1;

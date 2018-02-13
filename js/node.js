@@ -92,25 +92,12 @@ class Node {
 	}
     
     transform() {
-        for(let link of this.findLinksInto(null)) {
-            link.changeTo(this.key, this.drawingPort(link.toPort));
-        }
-        for(let link of this.findLinksOutOf(null)) {
-            link.changeFrom(this.key, this.drawingPort(link.fromPort));
-        }
-    }
-    
-    drawingPort(port) {
-        if(port == "n") return "e";
-        if(port == "ne") return "se";
-        if(port == "e") return "s";
-        if(port == "se") return "sw";
-        if(port == "s") return "w";
-        if(port == "sw") return "nw";
-        if(port == "w") return "n";
-        if(port == "nw") return "ne";
     }
 
+    addToSubgraph(subgraph) {
+        subgraph.addInternalNode(this.key);    
+    }
+    
 	draw(level, snapshot, subgraph) {
         subgraph.addInternalNode(this.key);
 		var str = level + this.key + '[label="' + this.text; 

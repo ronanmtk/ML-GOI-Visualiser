@@ -1,7 +1,7 @@
 class BinOp extends Node {
 
 	constructor(text) {
-		super("Mcircle", text);
+		super("Msquare", text);
 		this.subType = null;
 	}
 	

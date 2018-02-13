@@ -26,9 +26,8 @@ class GoIMachine {
 	}
 
 	// translation
-	toGraph(ast, group) {
+	toGraph(ast, group, displayFlag) {
 		var graph = this.graph;
-
 		if (ast instanceof Identifier) {
 			var v = new Var(ast.name).addToGroup(group)
 			return new Term(v, [v]);
@@ -66,7 +65,7 @@ class GoIMachine {
 		} 
 
 		else if (ast instanceof Application) {
-			var app = new App().addToGroup(group);
+			/*var app = new App().addToGroup(group);
 			//lhs
 			var left = this.toGraph(ast.lhs, group);
 			var der = new Der(left.prin.name).addToGroup(group);
@@ -77,6 +76,32 @@ class GoIMachine {
 			new Link(app.key, der.key, "w", "s").addToGroup(group);
 			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
 
+			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group));*/
+            
+            var rGroup;
+            var lFlag;
+            if (displayFlag == DisplayFlag.PAIRFST) {
+                rGroup = new PairTermWrapper(true).addToGroup(group);
+                lFlag = DisplayFlag.NONE;
+            }
+            else if (displayFlag == DisplayFlag.PAIRSND) {
+                rGroup = new PairTermWrapper(false).addToGroup(group);
+                lFlag = DisplayFlag.PAIRFST;
+            } 
+            else {
+                rGroup = group;
+                lFlag = DisplayFlag.NONE;
+            }
+			var app = new App().addToGroup(group);
+			//lhs
+			var left = this.toGraph(ast.lhs, group, lFlag);
+			var der = new Der(left.prin.name).addToGroup(group);
+			new Link(der.key, left.prin.key, "n", "s").addToGroup(group);
+			// rhs
+			var right = this.toGraph(ast.rhs, rGroup, DisplayFlag.NONE);		
+			
+			new Link(app.key, der.key, "w", "s").addToGroup(group);
+			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
 			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group));
 		} 
 
@@ -122,6 +147,24 @@ class GoIMachine {
 
 			return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group), cond.auxs, group));
 		}
+        
+        else if (ast instanceof Pair) {
+            var wrapper = PairBoxWrapper.create().addToGroup(group);
+            //var wrapper = BoxWrapper.create().addToGroup(group);
+            
+            //church encoding of pair
+            var pairAst = new Application(new Identifier(0,"z"), new Identifier(2,"x"));
+            pairAst = new Application(pairAst, new Identifier(1,"y"));
+            pairAst = new Abstraction("z",pairAst);
+            pairAst = new Abstraction("y",pairAst);
+            pairAst = new Abstraction("x",pairAst);
+            pairAst = new Application(pairAst,ast.fst);
+            pairAst = new Application(pairAst,ast.snd);
+            
+            var pair = this.toGraph(pairAst, wrapper.box, DisplayFlag.PAIRSND);
+            new Link(wrapper.prin.key,pair.prin.key,"n","s").addToGroup(wrapper);
+            return new Term(wrapper.prin, wrapper.auxs);
+        }
 
 		else if (ast instanceof Recursion) {
 			var p1 = ast.p1
@@ -234,6 +277,12 @@ class GoIMachine {
 		boxStack.val(boxStr + '\n' + boxStack.val());
 	}
 
+}
+
+var DisplayFlag = {
+    NONE: '',
+	PAIRFST: 'pairfst',
+    PAIRSND: 'pairsnd',
 }
 
 define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op', 'parser/ast', 'parser/token', 'parser/lexer', 'parser/parser'

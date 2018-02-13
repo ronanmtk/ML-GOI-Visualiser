@@ -1,7 +1,7 @@
 class Const extends Node {
 
 	constructor(name) {
-		super("square", name, name);
+		super("circle", name, name);
 	}
 	
 	transition(token, link) {

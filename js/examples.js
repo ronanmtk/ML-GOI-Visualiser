@@ -7,4 +7,6 @@ var fact_prog =
 + '\n'
 + 'fact 4';
 
-var wrong_prog = 'let f = (λx. x + x) in f 5';
+var basic_prog = 'let f = (λx. x + x) in f 5';
+
+var church_pair_prog = '(λp. p (λx. λy. x)) ((λx. λy. λz. z x y) 3 4)';

@@ -20,20 +20,6 @@ class Pax extends Expo {
 		super.delete();
 	}
     
-    transform() {
-        var outLink = this.findLinksOutOf(null)[0];
-        var inLink = this.findLinksInto(null)[0];
-        if(outLink.reverse) {
-            outLink.changeFrom(this.key, "w");
-            inLink.reverse = true;
-            inLink.changeTo(this.key, "e");
-        }
-        else {
-            outLink.changeFrom(this.key, "e");
-            inLink.changeTo(this.key, "w");
-        }
-    }
-    
     duplicate(nodeMap, displayGraph) {
         var newNode = this.copy();
         nodeMap.set(this.key, newNode);

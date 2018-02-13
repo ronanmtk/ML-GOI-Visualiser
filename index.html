@@ -18,7 +18,8 @@
                     var prog;
                     switch($("#sm-example option:selected").val()) {
                         case "fact": prog = fact_prog; break;
-                        case "wrong": prog = wrong_prog; break;
+                        case "basic": prog = basic_prog; break;
+                        case "church-pair": prog = church_pair_prog; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
@@ -34,7 +35,8 @@
                 <div id="select-code">
                     <select id="sm-example">
                         <option value="fact" selected>Factorial</option>
-                        <option value="wrong">Simplest</option>
+                        <option value="basic">Simplest</option>
+                        <option value="church-pair">Church Pairs</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">

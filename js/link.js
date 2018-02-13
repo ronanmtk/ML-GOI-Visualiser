@@ -11,12 +11,16 @@ class DisplayLink {
         this.matched = false;
     }
     
-    match() {
+    match(otherOpen, newNode) {
+        if(!otherOpen) {
+            this.open = false;
+            this.newNode = newNode;
+        }
         this.matched = true;
     }
     
     createNewOpenLink() {
-        return new DisplayLink(new Link(this.oldFrom, this.oldTo, this.fromPort, this.toPort, this.reverse, true), true);
+        return new DisplayLink(new Link(this.oldFrom, this.oldTo, this.fromPort, this.toPort, this.reverse, true), true, this.newNode);
     }
     
     draw(level) {

@@ -1,7 +1,7 @@
 class Recur extends Expo {
 
 	constructor() {
-		super("doublecircle", "rec");
+		super("invtrapezium", "rec");
 		this.box = null;
 	}
 

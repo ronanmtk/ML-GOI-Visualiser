@@ -4,7 +4,7 @@ class Der extends Expo {
         if(name == undefined) {
             super(null, "D", name);
         } else {
-            super("hexagon", name, name);   
+            super("rect", name, name);   
         }
 	}
 
@@ -15,9 +15,7 @@ class Der extends Expo {
                 this.graph.findNodeByKey(this.findLinksOutOf(null)[0].to).changeFocus(true);   
             }
             this.deleteAndPreserveInLink();
-        } else {
-            super.transform();
-        }   
+        }
     }
     
     transition(token, link) {

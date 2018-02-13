@@ -1,7 +1,7 @@
 class Weak extends Expo {
 
 	constructor() {
-		super(null, 'C0');
+		super(null, '?');
 	}
 
 	copy() {

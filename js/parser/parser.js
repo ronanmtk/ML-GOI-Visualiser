@@ -121,6 +121,7 @@ class Parser {
   // atom ::= LPAREN term RPAREN
   //        | LCID
   //        | INT
+  //        | PAIR LPAREN term COMMA term RPAREN
   //        | TRUE
   //        | FALSE
   //        | NOT term
@@ -139,6 +140,14 @@ class Parser {
     else if (this.lexer.next(Token.INT)) {
       const n = this.lexer.token(Token.INT);
       return new Constant(n);
+    }
+    else if (this.lexer.skip(Token.PAIR)) {
+      this.lexer.match(Token.LPAREN);
+      const fstTerm = this.atom(ctx);
+      this.lexer.match(Token.COMMA);
+      const sndTerm = this.atom(ctx);
+      this.lexer.match(Token.RPAREN);
+      return new Pair(fstTerm, sndTerm);
     }
     else if (this.lexer.skip(Token.TRUE)) {
       return new Constant(true);

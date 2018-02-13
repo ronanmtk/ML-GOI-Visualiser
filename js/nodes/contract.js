@@ -1,7 +1,7 @@
 class Contract extends Expo {
 
 	constructor(name) {
-		super("parallelogram", name, name);
+		super("square", name, name);
 	}
 
 	transition(token, link) {

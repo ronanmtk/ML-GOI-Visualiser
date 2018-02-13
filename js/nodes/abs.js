@@ -1,7 +1,7 @@
 class Abs extends Node {
 
 	constructor() {
-		super("rarrow", "fun");
+		super("ellipse", "fun");
 	}
 	
 	transition(token, link) {

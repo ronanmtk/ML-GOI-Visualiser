@@ -29,6 +29,7 @@ class Token {
   'REC',
 
   'INT',
+  'PAIR',
 
   'TRUE',
   'FALSE',

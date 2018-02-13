@@ -1,7 +1,7 @@
 class App extends Node {
 
 	constructor() {
-		super("invhouse", "apply");
+		super("rarrow", "apply");
 	}
 	
 	transition(token, link) {
