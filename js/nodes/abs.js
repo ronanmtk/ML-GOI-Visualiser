@@ -1,7 +1,7 @@
 class Abs extends Node {
 
-	constructor() {
-		super("ellipse", "fun");
+	constructor(redrawFlag) {
+		super(redrawFlag, "ellipse", "fun");
 	}
 	
 	transition(token, link) {
@@ -17,7 +17,11 @@ class Abs extends Node {
 			else if (data == CompData.R) {
 				token.dataStack.pop();
 				token.rewriteFlag = RewriteFlag.F_LAMBDA;
-                token.redraw = true;
+                if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+                    token.determineRedraw(this.redrawFlag);
+                } else {
+                    token.redraw = false;
+                }
 				return this.findLinksOutOf(null)[0];
 			}
 		}
@@ -48,7 +52,11 @@ class Abs extends Node {
 				this.delete();
 				app.delete();
                 
-                token.redraw = true;
+                if (this.redrawFlag == RedrawFlag.NONE) {
+                    token.determineRedraw(this.redrawFlag);
+                } else {
+                    token.redraw = false;
+                }
 			} else {
                 token.redraw = false;
             }
@@ -65,7 +73,7 @@ class Abs extends Node {
 	}
 
 	copy() {
-		return new Abs();
+		return new Abs(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

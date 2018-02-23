@@ -1,11 +1,15 @@
 class Contract extends Expo {
 
-	constructor(name) {
-		super("square", name, name);
+	constructor(name, redrawFlag) {
+		super(redrawFlag, "square", name, name);
 	}
 
 	transition(token, link) {
-        token.redraw = true;
+        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+            token.determineRedraw(this.redrawFlag);
+        } else {
+            token.redraw = false;
+        }
 		if (link.to == this.key) {
 			token.boxStack.push(link);
 			token.rewriteFlag = RewriteFlag.F_C;
@@ -39,7 +43,11 @@ class Contract extends Expo {
 				} 
 			}
 			
-            token.redraw = true;
+            if (this.redrawFlag == RedrawFlag.NONE) {
+                token.determineRedraw(this.redrawFlag);
+            } else {
+                token.redraw = false;
+            }
 			token.rewrite = false;
 			return nextLink;
 		}
@@ -52,7 +60,7 @@ class Contract extends Expo {
 	}
 
 	copy() {
-		var con = new Contract(this.name);
+		var con = new Contract(this.name, this.redrawFlag);
 		con.text = this.text;
 		return con;
 	}

@@ -128,6 +128,10 @@ class Lexer {
             this._token = new Token(Token.REC);
           else if (str == "pair")
             this._token = new Token(Token.PAIR);
+          else if (str == "fst")
+            this._token = new Token(Token.FST);
+          else if (str == "snd")
+            this._token = new Token(Token.SND);
           else if (str == "true")
             this._token = new Token(Token.TRUE);
           else if (str == "false")

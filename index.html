@@ -20,6 +20,8 @@
                         case "fact": prog = fact_prog; break;
                         case "basic": prog = basic_prog; break;
                         case "church-pair": prog = church_pair_prog; break;
+                        case "pair-eg": prog = pair_eg_prog; break;
+                        case "fancy-pair": prog = fancy_pair_prog; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
@@ -37,6 +39,8 @@
                         <option value="fact" selected>Factorial</option>
                         <option value="basic">Simplest</option>
                         <option value="church-pair">Church Pairs</option>
+                        <option value="pair-eg">Pair Operations</option>
+                        <option value="fancy-pair">Fancy Pairs</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">

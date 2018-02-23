@@ -1,7 +1,7 @@
 class Promo extends Expo {
 
-	constructor() {
-		super(null, "!");
+	constructor(redrawFlag) {
+		super(redrawFlag, null, "!", null);
 	}
 
 	transition(token, link) {
@@ -11,7 +11,11 @@ class Promo extends Expo {
 			return this.findLinksOutOf(null)[0];
 		}
 		else if (link.from == this.key) {
-            token.redraw = true;
+            if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+                token.determineRedraw(this.redrawFlag);
+            } else {
+                token.redraw = false;
+            }
 			return this.findLinksInto(null)[0];
 		}
 	}
@@ -40,7 +44,7 @@ class Promo extends Expo {
 					}
 					else {
 						var newBoxWrapper = this.group.copy().addToGroup(this.group.group);
-						Term.joinAuxs(this.group.auxs, newBoxWrapper.auxs, newBoxWrapper.group);
+						Term.joinAuxs(this.group.auxs, newBoxWrapper.auxs, newBoxWrapper.group, this.redrawFlag);
 						prev.findLinksOutOf(null)[0].changeTo(newBoxWrapper.prin.key, prev.findLinksOutOf(null)[0].toPort);
 						link.changeTo(this.key, "s");
 					}
@@ -67,7 +71,7 @@ class Promo extends Expo {
     }
 
 	copy() {
-		return new Promo();
+		return new Promo(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

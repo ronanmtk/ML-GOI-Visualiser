@@ -1,7 +1,7 @@
 class Const extends Node {
 
-	constructor(name) {
-		super("circle", name, name);
+	constructor(name, redrawFlag) {
+		super(redrawFlag, "circle", name, name);
 	}
 	
 	transition(token, link) {
@@ -14,7 +14,7 @@ class Const extends Node {
 	}
 
 	copy() {
-		return new Const(this.name);
+		return new Const(this.name, this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

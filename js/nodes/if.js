@@ -1,11 +1,15 @@
 class If extends Node {
 
-	constructor() {
-		super("diamond", "if");
+	constructor(redrawFlag) {
+		super(redrawFlag, "diamond", "if");
 	}
 
 	transition(token, link) {
-        token.redraw = true;
+        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+            token.determineRedraw(this.redrawFlag);
+        } else {
+            token.redraw = false;
+        }
 		if (link.to == this.key) {
 			token.dataStack.push(CompData.PROMPT);
 			return this.findLinksOutOf("w")[0];
@@ -35,7 +39,7 @@ class If extends Node {
 				var downLink = this.findLinksInto(null)[0];
 				var otherLink = this.findLinksOutOf(nextLink.fromPort == "n"?"e":"n")[0];
 				nextLink.changeFrom(downLink.from, downLink.fromPort);
-				var weak = new Weak(this.graph.findNodeByKey(otherLink.to).name).addToGroup(this.group);
+				var weak = new Weak(this.graph.findNodeByKey(otherLink.to).name, RedrawFlag.NONE).addToGroup(this.group);
 				otherLink.changeFrom(weak.key, "n");
                 token.weakMade = true;
 				this.delete();
@@ -54,7 +58,7 @@ class If extends Node {
 	}
 
 	copy() {
-		return new If();
+		return new If(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

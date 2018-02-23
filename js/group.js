@@ -33,7 +33,6 @@ class Group extends Node {
 	}
     
     draw(level, snapshot, subgraph) {
-        subgraph.addGroup(this.key);
         var str = "";
         for (let node of this.nodes) {
             str += node.draw(level, snapshot, subgraph);
@@ -86,13 +85,11 @@ class Box extends Group {
 
 	draw(level, snapshot, subgraph) {
         if(this.nodes.length > 1) {
-            var groupIndex = snapshot.highIndex;
-            snapshot.groupAdded();
-            var grp = new ClosableGroup(level, snapshot, groupIndex, this);
-            subgraph.children.set(groupIndex, grp);
-            return "%%%"+groupIndex;
+            this.displayGroup = subgraph;
+            var grp = new ClosableGroup(level, snapshot, this.key, this);
+            subgraph.children.set(this.key, grp);
+            return "%%%"+this.key;
         } else if (this.nodes.length == 1) {
-            subgraph.addGroup(this.key);
             return this.nodes[0].draw(level, snapshot, subgraph);
         }
 	}
@@ -122,25 +119,28 @@ class PairBox extends Group {
     }
     
     draw(level, snapshot, subgraph) {
-        var groupIndex = snapshot.highIndex;
-        snapshot.groupAdded();
-        var grp = new AbstractedGroup(level, snapshot, groupIndex, this);
-        subgraph.children.set(groupIndex, grp);
-        return "%%%"+groupIndex;
+        this.displayGroup = subgraph;
+        var grp = new AbstractedGroup(level, "pair", "doublecircle", snapshot, this.key, this);
+        subgraph.children.set(this.key, grp);
+        return "%%%"+this.key;
     }
     
 }
 
-class PairTermWrapper extends Group {
-    constructor(isFst) {
+class PairOpBox extends Group {
+    constructor(label) {
         super(false);
         this.nodes = [];
         this.links = [];
-        this.isFst = isFst;
+        this.label = label;
+    }
+    
+    copy(graph) {
+        //As with box, should be in a wrapper so this should never directly be called
     }
     
     duplicate(nodeMap, displayGraph) {
-        var newGroup = new PairTermWrapper(this.isFst);
+        var newGroup = new PairOpBox(this.label);
         for(let node of this.nodes) {
             var newNode = node.duplicate(nodeMap, displayGraph);
             if(newNode) {
@@ -151,37 +151,11 @@ class PairTermWrapper extends Group {
         return newGroup;
     }
     
-    copyTerm(map) {
-        var newPTWrapper = new PairTermWrapper(this.isFst);
-        
-        for(let node of this.nodes) {
-            var newNode;
-            if (node instanceof BoxWrapper) {
-				newNode = node.copyBox(map).addToGroup(newPTWrapper);
-			}
-            else if (node instanceof PairTermWrapper) {
-                newNode = node.copyTerm(map).addToGroup(newPTWrapper);
-            }
-			else {
-				var newNode = node.copy().addToGroup(newPTWrapper);
-				map.set(node.key, newNode.key);
-			}
-        }
-        
-        for (let link of this.links) {
-            //Okay to just do this as all nodes need to be added to map before copying links (will be done in calling function)
-            //AND this will only EVER get called from this function or BoxWrapper.copyBox (so within a box)
-			link.changeToGroup(this.group);
-		}
-        
-        return newPTWrapper;
+    draw(level, snapshot, subgraph) {
+        this.displayGroup = subgraph;
+        var grp = new AbstractedGroup(level, this.label, "rect", snapshot, this.key, this);
+        subgraph.children.set(this.key, grp);
+        return "%%%"+this.key;
     }
     
-    draw(level, snapshot, subgraph) {
-        var groupIndex = snapshot.highIndex;
-        snapshot.groupAdded();
-        var grp = new PairTermGroup(level, snapshot, groupIndex, this, subgraph);
-        subgraph.children.set(groupIndex, grp);
-        return "%%%"+groupIndex;
-	}
 }

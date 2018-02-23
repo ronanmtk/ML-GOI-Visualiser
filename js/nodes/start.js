@@ -1,11 +1,11 @@
 class Start extends Node {
 
 	constructor() {
-		super("point", "");
+		super(RedrawFlag.NONE, "point", "");
 	}
 	
 	transition(token) {
-        token.redraw = true;
+        token.determineRedraw(this.redrawFlag);
 		if (token.link == null && token.dataStack.last() == CompData.PROMPT) {
 			token.forward = true;
 			return this.findLinksOutOf(null)[0];
@@ -17,6 +17,10 @@ class Start extends Node {
 	copy() {
 		return new Start();
 	}
+    
+    linkedToStart() {
+        return true;
+    }
     
     duplicate(nodeMap, displayGraph) {
         var newNode = this.copy();
@@ -32,6 +36,10 @@ class Start extends Node {
 
 	draw(level, snapshot, subgraph) {
         subgraph.addInternalNode(this.key);
+        this.displayGroup = subgraph;
+        for(let link of this.findLinksOutOf()) {
+            link.displayGroup = subgraph;
+        }
         var str = '';
         str += (level + this.key + '[shape=' + this.shape);
         if(this.focus) {

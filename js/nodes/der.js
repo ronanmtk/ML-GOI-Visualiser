@@ -1,10 +1,10 @@
 class Der extends Expo {
 
-	constructor(name) {
-        if(name == undefined) {
-            super(null, "D", name);
+	constructor(name, redrawFlag) {
+        if(!name) {
+            super(redrawFlag, null, "D", name);
         } else {
-            super("rect", name, name);   
+            super(redrawFlag, "rect", name, name);   
         }
 	}
 
@@ -19,12 +19,16 @@ class Der extends Expo {
     }
     
     transition(token, link) {
-        token.redraw = (this.text != "D");
+        if (this.text != "D") {
+            token.determineRedraw(this.redrawFlag);
+        } else {
+            token.redraw = false;
+        }
         return super.transition(token, link);
     }
     
 	copy() {
-		var der = new Der(this.name);
+		var der = new Der(this.name, this.redrawFlag);
 		der.text = this.text;
 		return der;
 	}

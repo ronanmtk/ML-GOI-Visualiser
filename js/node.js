@@ -2,14 +2,16 @@ var showKey = false;
 
 class Node {
 
-	constructor(shape, text, name) {
+	constructor(redrawFlag, shape, text, name) {
 		this.key = null;
+        this.redrawFlag = redrawFlag;
 		this.shape = shape;
 		this.text = text;
 		this.name = name; // identifier name or constant name if any
         this.focus = false;
 		this.graph = null;
 		this.group = null;
+        this.displayGroup = null;
 		this.width = null;
 		this.height = null;
 		this.links = [];
@@ -56,6 +58,16 @@ class Node {
 		}
 		return links;
 	}
+    
+    linkedToStart() {
+        var linked = false;
+        for(let link of this.findLinksInto("s")) {
+            if(this.graph.findNodeByKey(link.from).linkedToStart()) {
+                return true;
+            }
+        }
+        return linked;
+    }
 
 	copy(graph) {
 		var newNode = new Node(this.shape, this.text, this.name).addToGraph(graph);
@@ -95,24 +107,31 @@ class Node {
     }
 
     addToSubgraph(subgraph) {
-        subgraph.addInternalNode(this.key);    
+        if(this.linkedToStart()) {
+            subgraph.addInternalNode(this.key);    
+            this.displayGroup = subgraph;
+            return true;
+        }
+        return false;
     }
     
 	draw(level, snapshot, subgraph) {
-        subgraph.addInternalNode(this.key);
-		var str = level + this.key + '[label="' + this.text; 
-		if (showKey)
-			str += ':' + this.key;
-		str += '"';
-		if (this.shape != null)
-			str += ',shape=' + this.shape;
-		if (this.width != null)
-			str += ',width=' + this.width;
-		if (this.height != null)
-			str += ',height=' + this.height;
-        if (this.focus)
-            str += ',style=filled,color=green3,fontcolor=white';
-		return str += '];'
+        if(this.addToSubgraph(subgraph)) {
+            var str = level + this.key + '[label="' + this.text; 
+            if (showKey)
+                str += ':' + this.key;
+            str += '"';
+            if (this.shape != null)
+                str += ',shape=' + this.shape;
+            if (this.width != null)
+                str += ',width=' + this.width;
+            if (this.height != null)
+                str += ',height=' + this.height;
+            if (this.focus)
+                str += ',style=filled,color=green3,fontcolor=white';
+            return str += '];'   
+        }
+        return "";
 	}
 
 	// machine instructions

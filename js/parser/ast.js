@@ -71,6 +71,13 @@ class Pair {
   }
 }
 
+class PairOp {
+    constructor(isFst, pair) {
+        this.isFst = isFst;
+        this.pair = pair;
+    }
+}
+
 class Recursion {
   constructor(p1, p2, body) {
     this.p1 = p1;

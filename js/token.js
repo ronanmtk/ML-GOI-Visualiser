@@ -33,10 +33,38 @@ class MachineToken {
 		this.rewriteFlag = RewriteFlag.EMPTY;
 		this.dataStack = [CompData.PROMPT];
 		this.boxStack = [];
+        this.redrawFlag = RedrawFlag.NONE;
         
         this.weakMade = false;
         this.redraw = false;
+        this.lastRedrawCounter = 0;
 	}
+    
+    determineRedraw(newFlag) {
+        if(newFlag == RedrawFlag.INOP) {
+            if(this.redrawFlag != RedrawFlag.INOP) {
+                //gone into a pair operation
+                this.redrawFlag = RedrawFlag.INOP;
+                this.lastRedrawCounter++;
+                this.redraw = true;
+                return;
+            }
+        }
+        
+        if(this.redrawFlag == RedrawFlag.INOP) {
+            if(++this.lastRedrawCounter == 9) {
+                this.redrawFlag = RedrawFlag.NONE;
+                this.lastRedrawCounter = 0;
+                this.redraw = true;
+                return;
+            }
+            this.redraw = false;
+            return;
+        }
+        
+        this.redrawFlag = newFlag;
+        this.redraw = true;
+    }
 }
 
 var CompData = {

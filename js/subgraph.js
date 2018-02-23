@@ -2,6 +2,7 @@ class SubGraph {
     constructor() {
         this.templateMarker = "%%%";
         this.dot = "";
+        this.key = "";
         this.internalNodes = [];
         this.openLinks = [];
         this.children = new Map();
@@ -13,6 +14,24 @@ class SubGraph {
     
     addLink(link) {
         this.openLinks.push(link);
+    }
+    
+    containsNode(key, nodeCollection) {
+        if(!nodeCollection)
+            nodeCollection = this.internalNodes;
+        for(let node of nodeCollection) {
+            if(node == key)
+                return true;
+        }
+        return false;
+    }
+    
+    atHigherLevelThan(node) {
+        for(let key of this.children.keys()) {
+            var group = this.children.get(key);
+            return group.containsNode(node) || group.atHigherLevelThan(node);
+        }
+        return false;
     }
     
     sameLevel(node1, node2) {
@@ -38,7 +57,7 @@ class SubGraph {
     completeDotTemplates(hide) {
         var str = this.dot;
         for(let groupIndex of this.children.keys()) {
-            str = str.replace(this.templateMarker+groupIndex,this.children.get(groupIndex).display(hide));
+            str = str.replace(this.templateMarker+groupIndex,this.children.get(groupIndex).displayNodes(hide));
         }
         return str;
     }

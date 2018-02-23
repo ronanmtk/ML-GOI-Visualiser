@@ -35,6 +35,8 @@ class Token {
   'FALSE',
 
   'NOT',
+  'FST',
+  'SND',
 
   'AND',
   'OR',

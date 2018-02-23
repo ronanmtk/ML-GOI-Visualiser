@@ -1,11 +1,11 @@
 class Weak extends Expo {
 
-	constructor() {
-		super(null, '?');
+	constructor(redrawFlag) {
+		super(redrawFlag, null, '?', null);
 	}
 
 	copy() {
-		return new Weak();
+		return new Weak(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

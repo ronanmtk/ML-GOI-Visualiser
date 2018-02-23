@@ -12,10 +12,10 @@ class Term extends Group {
 		return this;
 	}
 
-	createPaxsOnTopOf(auxs) {
+	createPaxsOnTopOf(auxs, redrawFlag) {
 		var newPaxs = [];
 		for (let pax of auxs) {
-			var newPax = new Pax(pax.name).addToGroup(this);
+			var newPax = new Pax(pax.name, redrawFlag).addToGroup(this);
 			
 			if (pax.findLinksOutOf(null).length == 0)
 				new Link(pax.key, newPax.key, "n", "s").addToGroup(this);
@@ -30,13 +30,13 @@ class Term extends Group {
 		return newPaxs;
 	}
 
-	static joinAuxs(leftAuxs, rightAuxs, group) {
+	static joinAuxs(leftAuxs, rightAuxs, group, redrawFlag) {
 		var newAuxs = leftAuxs.concat(rightAuxs);
 		outter:
 		for (let leftAux of leftAuxs) {
 			for (let rightAux of rightAuxs) {
 				if (leftAux.name == rightAux.name) {
-					var con = new Contract(leftAux.name).addToGroup(group);
+					var con = new Contract(leftAux.name, redrawFlag).addToGroup(group);
 
 					var outLink = leftAux.findLinksOutOf(null)[0];
 					if (typeof outLink != 'undefined') {
@@ -65,10 +65,10 @@ class BoxWrapper extends Term {
 		this.box = box;
 	}
 
-	static create() {
+	static create(redrawFlag) {
 		var wrapper = new BoxWrapper();
 		var box = new Box().addToGroup(wrapper);
-		var promo = new Promo().addToGroup(wrapper);
+		var promo = new Promo(redrawFlag).addToGroup(wrapper);
 		wrapper.set(promo, box, []);
 		return wrapper;
 	}
@@ -116,11 +116,7 @@ class BoxWrapper extends Term {
 			var newNode;
 			if (node instanceof BoxWrapper) {
 				newNode = node.copyBox(map).addToGroup(newBox);
-			}
-            else if (node instanceof PairTermWrapper) {
-                newNode = node.copyTerm(map).addToGroup(newBox);
-            }
-			else {
+			} else {
 				var newNode = node.copy().addToGroup(newBox);
 				map.set(node.key, newNode.key);
 			}
@@ -166,70 +162,13 @@ class BoxWrapper extends Term {
 		super.delete();
 	}
 
-	draw(level, snapshot, subgraph, templateIndex) {
-        subgraph.addGroup(this.key);
+	draw(level, snapshot, subgraph) {
 		var str = "";
 		
 		for (let node of this.nodes) {
-			str += node.draw(level, snapshot, subgraph, templateIndex);
+			str += node.draw(level, snapshot, subgraph);
 		}
 		
 		return str;
-	}
-}
-
-//VERY QUICK FIX, DELETE FUNCTIONS WHICH ARE IDENTICAL
-class PairBoxWrapper extends BoxWrapper {
-    constructor(prin, box, auxs) {
-        super();
-    }
-    
-    static create() {
-		var wrapper = new PairBoxWrapper();
-		var box = new PairBox().addToGroup(wrapper);
-		var promo = new Promo().addToGroup(wrapper);
-		wrapper.set(promo, box, []);
-		return wrapper;
-	}
-
-	copyBox(map) {
-		var newBoxWrapper = new PairBoxWrapper();
-		var newPrin = this.prin.copy().addToGroup(newBoxWrapper);
-		newBoxWrapper.prin = newPrin;
-		map.set(this.prin.key, newPrin.key);
-
-		var newBox = new PairBox().addToGroup(newBoxWrapper);
-		newBoxWrapper.box = newBox;
-
-		newBoxWrapper.auxs = [];
-		for (let node of this.box.nodes) {
-			var newNode;
-			if (node instanceof BoxWrapper) {
-				newNode = node.copyBox(map).addToGroup(newBox);
-			}
-            else if (node instanceof PairTermWrapper) {
-                newNode = node.copyTerm(map).addToGroup(newBox);
-            }
-			else {
-				var newNode = node.copy().addToGroup(newBox);
-				map.set(node.key, newNode.key);
-			}
-		}
-		for (let aux of this.auxs) {
-			var newAux = aux.copy().addToGroup(newBoxWrapper);
-			newBoxWrapper.auxs.push(newAux);
-			map.set(aux.key, newAux.key);
-		}
-
-		for (let link of this.box.links) {
-			var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort, link.toPort).addToGroup(newBox);
-			newLink.reverse = link.reverse;
-		}
-		for (let link of this.links) {
-			var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort, link.toPort).addToGroup(newBoxWrapper);
-			newLink.reverse = link.reverse;
-		}
-
-		return newBoxWrapper;
 	}
 }

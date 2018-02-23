@@ -1,4 +1,5 @@
 var graph = null;
+var dev = false;
 
 class GoIMachine {
 	
@@ -20,24 +21,24 @@ class GoIMachine {
 		this.count = 0;
 		// create graph
 		var start = new Start().addToGroup(this.graph.child);
-		var term = this.toGraph(ast, this.graph.child);
+		var term = this.toGraph(ast, this.graph.child, DisplayFlag.NONE, RedrawFlag.NONE);
 		new Link(start.key, term.prin.key, "n", "s").addToGroup(this.graph.child);
 		this.deleteVarNode(this.graph.child);
 	}
 
 	// translation
-	toGraph(ast, group, displayFlag) {
+	toGraph(ast, group, displayFlag, redrawFlag) {
 		var graph = this.graph;
 		if (ast instanceof Identifier) {
-			var v = new Var(ast.name).addToGroup(group)
+			var v = new Var(ast.name, redrawFlag).addToGroup(group)
 			return new Term(v, [v]);
 		} 
 
 		else if (ast instanceof Abstraction) {
 			var param = ast.param;
-			var wrapper = BoxWrapper.create().addToGroup(group);
-			var abs = new Abs().addToGroup(wrapper.box);
-			var term = this.toGraph(ast.body, wrapper.box);
+			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
+			var abs = new Abs(redrawFlag).addToGroup(wrapper.box);
+			var term = this.toGraph(ast.body, wrapper.box, displayFlag, redrawFlag);
 			new Link(wrapper.prin.key, abs.key, "n", "s").addToGroup(wrapper);
 
 			new Link(abs.key, term.prin.key, "e", "s").addToGroup(abs.group);
@@ -55,80 +56,71 @@ class GoIMachine {
 			if (paramUsed) {
 				auxs.splice(auxs.indexOf(auxNode), 1);
 			} else {
-				auxNode = new Weak(param).addToGroup(abs.group);
+				auxNode = new Weak(param, redrawFlag).addToGroup(abs.group);
 			}
 			new Link(auxNode.key, abs.key, "nw", "w", true).addToGroup(abs.group);
 
-			wrapper.auxs = wrapper.createPaxsOnTopOf(auxs);
+			wrapper.auxs = wrapper.createPaxsOnTopOf(auxs, redrawFlag);
 
 			return new Term(wrapper.prin, wrapper.auxs);
 		} 
 
 		else if (ast instanceof Application) {
-			/*var app = new App().addToGroup(group);
-			//lhs
-			var left = this.toGraph(ast.lhs, group);
-			var der = new Der(left.prin.name).addToGroup(group);
-			new Link(der.key, left.prin.key, "n", "s").addToGroup(group);
-			// rhs
-			var right = this.toGraph(ast.rhs, group);		
-			
-			new Link(app.key, der.key, "w", "s").addToGroup(group);
-			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
-
-			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group));*/
-            
-            var rGroup;
-            var lFlag;
+            var lGroup;
+            var lDisplayFlag;
+            var lRedrawFlag;
             if (displayFlag == DisplayFlag.PAIRFST) {
-                rGroup = new PairTermWrapper(true).addToGroup(group);
-                lFlag = DisplayFlag.NONE;
+                lGroup = dev ? new Group(true).addToGroup(group) : new PairBox().addToGroup(group);
+                lDisplayFlag = DisplayFlag.NONE;
+                lRedrawFlag = RedrawFlag.INPAIR;
             }
             else if (displayFlag == DisplayFlag.PAIRSND) {
-                rGroup = new PairTermWrapper(false).addToGroup(group);
-                lFlag = DisplayFlag.PAIRFST;
+                lGroup = group;
+                lDisplayFlag = DisplayFlag.PAIRFST;
+                lRedrawFlag = RedrawFlag.NONE;
             } 
             else {
-                rGroup = group;
-                lFlag = DisplayFlag.NONE;
+                lGroup = group;
+                lDisplayFlag = DisplayFlag.NONE;
+                lRedrawFlag = RedrawFlag.NONE;
             }
-			var app = new App().addToGroup(group);
+			var app = new App(redrawFlag).addToGroup(group);
 			//lhs
-			var left = this.toGraph(ast.lhs, group, lFlag);
-			var der = new Der(left.prin.name).addToGroup(group);
+			var left = this.toGraph(ast.lhs, lGroup, lDisplayFlag, lRedrawFlag);
+			var der = new Der(left.prin.name, redrawFlag).addToGroup(group);
 			new Link(der.key, left.prin.key, "n", "s").addToGroup(group);
 			// rhs
-			var right = this.toGraph(ast.rhs, rGroup, DisplayFlag.NONE);		
+			var right = this.toGraph(ast.rhs, group, DisplayFlag.NONE, redrawFlag);		
 			
 			new Link(app.key, der.key, "w", "s").addToGroup(group);
 			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
-			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group));
-		} 
+			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group, redrawFlag));
+		} //start of new way of representing pairs implemented for application above 
 
 		else if (ast instanceof Constant) {
-			var wrapper = BoxWrapper.create().addToGroup(group);
-			var constant = new Const(ast.value).addToGroup(wrapper.box);
+			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
+			var constant = new Const(ast.value, redrawFlag).addToGroup(wrapper.box);
 			new Link(wrapper.prin.key, constant.key, "n", "s").addToGroup(wrapper);
 			return new Term(wrapper.prin, wrapper.auxs);
 		}
 
 		else if (ast instanceof BinaryOp) {
-			var binop = new BinOp(ast.name).addToGroup(group);
+			var binop = new BinOp(ast.name, redrawFlag).addToGroup(group);
 
 			binop.subType = ast.type;
-			var left = this.toGraph(ast.v1, group);
-			var right = this.toGraph(ast.v2, group);
+			var left = this.toGraph(ast.v1, group, displayFlag, redrawFlag);
+			var right = this.toGraph(ast.v2, group, displayFlag, redrawFlag);
 
 			new Link(binop.key, left.prin.key, "w", "s").addToGroup(group);
 			new Link(binop.key, right.prin.key, "e", "s").addToGroup(group);
 
-			return new Term(binop, Term.joinAuxs(left.auxs, right.auxs, group));
+			return new Term(binop, Term.joinAuxs(left.auxs, right.auxs, group, redrawFlag));
 		}
 
 		else if (ast instanceof UnaryOp) {
-			var unop = new UnOp(ast.name).addToGroup(group);
+			var unop = new UnOp(ast.name, redrawFlag).addToGroup(group);
 			unop.subType = ast.type;
-			var box = this.toGraph(ast.v1, group);
+			var box = this.toGraph(ast.v1, group, displayFlag, redrawFlag);
 
 			new Link(unop.key, box.prin.key, "n", "s").addToGroup(group);
 
@@ -136,45 +128,65 @@ class GoIMachine {
 		}
 
 		else if (ast instanceof IfThenElse) {
-			var ifnode = new If().addToGroup(group);
-			var cond = this.toGraph(ast.cond, group);
-			var t1 = this.toGraph(ast.t1, group);
-			var t2 = this.toGraph(ast.t2, group);
+			var ifnode = new If(redrawFlag).addToGroup(group);
+			var cond = this.toGraph(ast.cond, group, displayFlag, redrawFlag);
+			var t1 = this.toGraph(ast.t1, group, displayFlag, redrawFlag);
+			var t2 = this.toGraph(ast.t2, group, displayFlag, redrawFlag);
 
 			new Link(ifnode.key, cond.prin.key, "w", "s").addToGroup(group);
 			new Link(ifnode.key, t1.prin.key, "n", "s").addToGroup(group);
 			new Link(ifnode.key, t2.prin.key, "e", "s").addToGroup(group);
 
-			return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group), cond.auxs, group));
+			return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group, redrawFlag), cond.auxs, group, redrawFlag));
 		}
         
         else if (ast instanceof Pair) {
-            var wrapper = PairBoxWrapper.create().addToGroup(group);
-            //var wrapper = BoxWrapper.create().addToGroup(group);
+            //var box = dev ? new Group(true).addToGroup(group) : new PairBox().addToGroup(group);;
             
             //church encoding of pair
-            var pairAst = new Application(new Identifier(0,"z"), new Identifier(2,"x"));
-            pairAst = new Application(pairAst, new Identifier(1,"y"));
+            var pairAst = new Application(new Identifier(0,"z"), new Identifier(2,"pair1"));
+            pairAst = new Application(pairAst, new Identifier(1,"pair2"));
             pairAst = new Abstraction("z",pairAst);
-            pairAst = new Abstraction("y",pairAst);
-            pairAst = new Abstraction("x",pairAst);
+            pairAst = new Abstraction("pair2",pairAst);
+            pairAst = new Abstraction("pair1",pairAst);
             pairAst = new Application(pairAst,ast.fst);
             pairAst = new Application(pairAst,ast.snd);
             
-            var pair = this.toGraph(pairAst, wrapper.box, DisplayFlag.PAIRSND);
-            new Link(wrapper.prin.key,pair.prin.key,"n","s").addToGroup(wrapper);
-            return new Term(wrapper.prin, wrapper.auxs);
+            var pair = this.toGraph(pairAst, group, DisplayFlag.PAIRSND, RedrawFlag.NONE);
+            return new Term(pair.prin, pair.auxs);
+        }
+        
+        else if (ast instanceof PairOp) {
+            var box = dev ? new Group(true).addToGroup(group) : new PairOpBox(ast.isFst ? "fst" : "snd").addToGroup(group);
+            var der = new Der(null, redrawFlag).addToGroup(group);
+            
+            var pairOpAst = (ast.isFst ? new Identifier(1,"x") : new Identifier(0,"y"));
+            pairOpAst = new Abstraction("y",pairOpAst);
+            pairOpAst = new Abstraction("x",pairOpAst);
+            pairOpAst = new Application(new Identifier(0,"p"),pairOpAst);
+            pairOpAst = new Abstraction("p",pairOpAst);
+            
+            var pairOp = this.toGraph(pairOpAst, box, displayFlag, RedrawFlag.INOP);
+            new Link(der.key,pairOp.prin.key,"n","s").addToGroup(group);
+            
+            var pair = this.toGraph(ast.pair,group, displayFlag, redrawFlag);
+            
+            var app = new App(redrawFlag).addToGroup(group);
+            new Link(app.key,der.key,"w","s").addToGroup(group);
+            new Link(app.key,pair.prin.key,"e","s").addToGroup(group);
+            
+            return new Term(app, Term.joinAuxs(pairOp.auxs, pair.auxs, group, redrawFlag));
         }
 
 		else if (ast instanceof Recursion) {
 			var p1 = ast.p1
 			var p2 = ast.p2;
 			// recur term
-			var wrapper = BoxWrapper.create().addToGroup(group);
+			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
 			wrapper.prin.delete();
-			var recur = new Recur().addToGroup(wrapper);
+			var recur = new Recur(redrawFlag).addToGroup(wrapper);
 			wrapper.prin = recur;
-			var box = this.toGraph(new Abstraction(p2, ast.body), wrapper.box);
+			var box = this.toGraph(new Abstraction(p2, ast.body), wrapper.box, displayFlag, redrawFlag);
 			wrapper.auxs = Array.from(box.auxs);
 			recur.box = box;
 
@@ -193,7 +205,7 @@ class GoIMachine {
 			if (p1Used) {
 				wrapper.auxs.splice(wrapper.auxs.indexOf(auxNode1), 1);
 			} else {
-				auxNode1 = new Weak(p1).addToGroup(wrapper.box);
+				auxNode1 = new Weak(p1, redrawFlag).addToGroup(wrapper.box);
 			}
 			new Link(auxNode1.key, recur.key, "nw", "w", true).addToGroup(wrapper);
 
@@ -285,7 +297,15 @@ var DisplayFlag = {
     PAIRSND: 'pairsnd',
 }
 
-define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op', 'parser/ast', 'parser/token', 'parser/lexer', 'parser/parser'
+var RedrawFlag = {
+    NONE: '',
+    INPAIR: 'INPAIR',
+    INOP: 'INOP'
+}
+
+define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op'
+                    , 'subgraph', 'graph-shot', 'closable-group', 'abstracted-group' 
+                    , 'parser/ast', 'parser/token', 'parser/lexer', 'parser/parser'
 					, 'nodes/expo', 'nodes/abs', 'nodes/app', 'nodes/binop', 'nodes/const', 'nodes/contract'
 					, 'nodes/der', 'nodes/if', 'nodes/pax', 'nodes/promo'
 					, 'nodes/recur', 'nodes/start', 'nodes/unop', 'nodes/weak'],

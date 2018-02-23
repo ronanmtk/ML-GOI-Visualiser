@@ -1,11 +1,15 @@
 class App extends Node {
 
-	constructor() {
-		super("rarrow", "apply");
+	constructor(redrawFlag) {
+		super(redrawFlag, "rarrow", "apply");
 	}
 	
 	transition(token, link) {
-        token.redraw = true;
+        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+            token.determineRedraw(this.redrawFlag);
+        } else {
+            token.redraw = false;
+        }
 		if (link.to == this.key) {
 			token.dataStack.push(CompData.PROMPT);
 			return this.findLinksOutOf("e")[0];
@@ -22,7 +26,7 @@ class App extends Node {
 	}
 
 	copy() {
-		return new App();
+		return new App(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {

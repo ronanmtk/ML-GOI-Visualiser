@@ -1,13 +1,13 @@
 class Pax extends Expo {
 
-	constructor(name) {
-		super(null, "", name);
+	constructor(name, redrawFlag) {
+		super(redrawFlag, null, "", name);
         this.width = ".0";
 		this.height = ".0";
 	}
 
 	copy() {
-		return new Pax(this.name);
+		return new Pax(this.name, this.redrawFlag);
 	}
     
     transition(token, link) {

@@ -1,7 +1,7 @@
 class Expo extends Node {
 
-	constructor(shape, text, name) {
-		super(shape, text, name);
+	constructor(redrawFlag, shape, text, name) {
+		super(redrawFlag, shape, text, name);
 		this.width = ".4";
 		this.height = ".4";
 	}

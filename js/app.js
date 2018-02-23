@@ -121,11 +121,10 @@ require(["jquery", "renderer", "goi-machine"],
         }
 
 		function next() {
-			if (!finished && (current == latest)) {
-				while(!machine.pass($("#flag"), $("#dataStack"), $("#boxStack")));
+            if (!finished && (current == latest)) {
+                while(!machine.pass($("#flag"), $("#dataStack"), $("#boxStack")));
             }
             draw(true, true);
-
 		}
 
 		$("#btn-pause").click(function(event) {

@@ -1,14 +1,18 @@
 class Recur extends Expo {
 
-	constructor() {
-		super("invtrapezium", "rec");
+	constructor(redrawFlag) {
+		super(redrawFlag, "invtrapezium", "rec");
 		this.box = null;
 	}
 
 	transition(token, link) {
 		if (link.to == this.key) {
 			token.rewriteFlag = RewriteFlag.F_RECUR;
-            token.redraw = true;
+            if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
+                token.determineRedraw(this.redrawFlag);
+            } else {
+                token.redraw = false;
+            }
 			return this.findLinksOutOf("e")[0];
 		}
 	}
@@ -30,12 +34,16 @@ class Recur extends Expo {
 			var outLink = this.findLinksOutOf("e")[0];
 			outLink.changeFrom(inLink.from, inLink.fromPort);
 
-			Term.joinAuxs(wrapper.auxs, oldBox.auxs, wrapper.group);
+			Term.joinAuxs(wrapper.auxs, oldBox.auxs, wrapper.group, this.redrawFlag);
 			
 			oldGroup.delete();
 
 			token.rewrite = true;
-            token.redraw = true;
+            if (this.redrawFlag == RedrawFlag.NONE) {
+                token.determineRedraw(this.redrawFlag);
+            } else {
+                token.redraw = false;
+            }
 			return nextLink;
 		}
 
@@ -47,7 +55,7 @@ class Recur extends Expo {
 	}
 
 	copy() {
-		return new Recur();
+		return new Recur(this.redrawFlag);
 	}
     
     duplicate(nodeMap, displayGraph) {
