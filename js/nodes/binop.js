@@ -6,18 +6,15 @@ class BinOp extends Node {
 	}
 	
 	transition(token, link) {
-        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-            token.determineRedraw(this.redrawFlag);
-        } else {
-            token.redraw = false;
-        }
 		if (link.to == this.key) {
 			token.dataStack.push(CompData.PROMPT);
+            token.determineRedraw();
 			return this.findLinksOutOf("e")[0];
 		}
 		else if (link.from == this.key && link.fromPort == "e") {
 			token.dataStack.push(CompData.PROMPT);
 			token.forward = true;
+            token.determineRedraw();
 			return this.findLinksOutOf("w")[0];
 		}
 		else if (link.from == this.key && link.fromPort == "w") {
@@ -29,6 +26,7 @@ class BinOp extends Node {
 
 				token.dataStack.push(result);
 				token.rewriteFlag = RewriteFlag.F_OP;
+                token.determineRedraw();
 				return this.findLinksInto(null)[0];
 			}
 		}
@@ -54,15 +52,18 @@ class BinOp extends Node {
 
 				token.rewriteFlag = RewriteFlag.F_PROMO;
 				token.rewrite = true;
+                token.determineRedraw();
 				return newLink;
 			}
 
 			token.rewrite = true;
+            token.redraw = false;
 			return nextLink;
 		}
 
 		else if (token.rewriteFlag == RewriteFlag.EMPTY) {
 			token.rewrite = false;
+            token.redraw = false;
 			return nextLink;
 		}
 	}

@@ -14,3 +14,22 @@ var church_pair_prog = '(λp. p (λx. λy. x)) ((λx. λy. λz. z x y) 3 4)';
 var pair_eg_prog = 'fst (snd pair( pair(2,3) , pair(4,5) ) )';
 
 var fancy_pair_prog = 'fst pair ( ((λx.x+x)5) , pair( ((λx.x)3) , ((λx. λy. x * y) 9 2) ) )';
+
+var fv_pair_prog = 'let f = λl. \n'+
+                   '(if (fst l) \n'+
+                   'then (snd l) \n'+
+                   'else 0) \n'+
+                   'in f pair(true, 7)';
+
+var church_list_prog = '(λz. fst (snd z)) \n'+
+                       '((λh. λt. pair( false, pair(h, t) )) \n'+
+                       '12 ((λh. λt. pair( false, pair(h, t) )) 5 pair(true,true)) )';
+
+var sum_list_prog = 'let sum = rec(f,list). \n'+
+                    'if (fst list) \n'+
+                    'then 0 \n'+
+                    'else (((λz. fst (snd z)) list) + (f ((λz. snd (snd z)) list))) \n'+
+                    'in \n'+
+                    'sum \n'+
+                    '((λh. λt. pair( false, pair(h, t) )) \n'+
+                    '12 ((λh. λt. pair( false, pair(h, t) )) 5 pair(true,true)) )'; 

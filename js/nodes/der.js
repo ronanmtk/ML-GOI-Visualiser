@@ -20,7 +20,7 @@ class Der extends Expo {
     
     transition(token, link) {
         if (this.text != "D") {
-            token.determineRedraw(this.redrawFlag);
+            token.determineRedraw();
         } else {
             token.redraw = false;
         }

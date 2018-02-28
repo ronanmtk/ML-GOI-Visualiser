@@ -2,26 +2,27 @@ class Abs extends Node {
 
 	constructor(redrawFlag) {
 		super(redrawFlag, "ellipse", "fun");
+        this.exit = false;
 	}
 	
 	transition(token, link) {
 		if (link.to == this.key && link.toPort == "s") {
+            var otherEnd = this.graph.findNodeByKey(link.from);
+            if(otherEnd.redrawFlag < this.redrawFlag && otherEnd instanceof App) {
+                token.upChangeTransition(this.redrawFlag)
+            } else {
+                token.determineRedraw();
+            }
 			var data = token.dataStack.last();
 			if (data == CompData.PROMPT) {
 				token.dataStack.pop();
 				token.dataStack.push(CompData.LAMBDA);
 				token.forward = false;
-                token.redraw = false;
 				return link;
 			}
 			else if (data == CompData.R) {
 				token.dataStack.pop();
 				token.rewriteFlag = RewriteFlag.F_LAMBDA;
-                if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-                    token.determineRedraw(this.redrawFlag);
-                } else {
-                    token.redraw = false;
-                }
 				return this.findLinksOutOf(null)[0];
 			}
 		}
@@ -30,9 +31,15 @@ class Abs extends Node {
 	rewrite(token, nextLink) {
 		if (token.rewriteFlag == RewriteFlag.F_LAMBDA && nextLink.from == this.key) {
 			token.rewriteFlag = RewriteFlag.EMPTY;
-
+            token.redraw = false;
 			var app = this.graph.findNodeByKey(this.findLinksInto("s")[0].from);
 			if (app instanceof App) {
+                if (this.redrawFlag == token.peekRedrawStack()) {
+                    if(this.redrawFlag == RedrawFlag.INOP && this.exit) { //exit conditions
+                        token.downChangeTransition(this.redrawFlag);
+                        token.determineRedraw();
+                    }
+                }
 				// M rule
 				var appLink = app.findLinksInto(null)[0];
 				var appOtherLink = app.findLinksOutOf("e")[0];
@@ -52,14 +59,8 @@ class Abs extends Node {
 				this.delete();
 				app.delete();
                 
-                if (this.redrawFlag == RedrawFlag.NONE) {
-                    token.determineRedraw(this.redrawFlag);
-                } else {
-                    token.redraw = false;
-                }
-			} else {
-                token.redraw = false;
-            }
+                
+			}
 
 			token.rewrite = true;
 			return nextLink;

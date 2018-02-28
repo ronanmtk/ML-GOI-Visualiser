@@ -112,12 +112,17 @@ class BoxWrapper extends Term {
 		newBoxWrapper.box = newBox;
 
 		newBoxWrapper.auxs = [];
+        var pairopboxs = [];
 		for (let node of this.box.nodes) {
 			var newNode;
-			if (node instanceof BoxWrapper) {
+            if (node instanceof PairWrapper) {
+                newNode = node.copyPair(map).addToGroup(newBox);
+            } else if (node instanceof BoxWrapper) {
 				newNode = node.copyBox(map).addToGroup(newBox);
-			} else {
-				var newNode = node.copy().addToGroup(newBox);
+			} else if (node instanceof PairOpBox) {
+                newNode = node.copyBox(map).addToGroup(newBox);
+            } else {
+				newNode = node.copy().addToGroup(newBox);
 				map.set(node.key, newNode.key);
 			}
 		}
@@ -171,4 +176,55 @@ class BoxWrapper extends Term {
 		
 		return str;
 	}
+}
+
+class PairWrapper extends Group {
+    constructor() {
+        super();
+    }
+    
+    addNode(node, isPair) {
+        if(isPair) {
+            this.pair = node;
+        }
+        this.nodes.push(node);
+    }
+    
+    copyPair(map) {
+        var newWrapper = new PairWrapper();
+        var newPair = new PairBox().addToGroup(newPairWrapper);
+        
+        var newNode;
+        for(let node of this.pair.nodes) {
+            if(node instanceof BoxWrapper) {
+                newNode = node.copyBox(map).addToGroup(newPair);
+            } else {
+                newNode = node.copy().addToGroup(newPair);
+                map.set(node.key, newNode.key);
+            }
+        }
+        for(let node of this.nodes) {
+            if (node instanceof BoxWrapper) {
+				newNode = node.copyBox(map).addToGroup(newWrapper);
+			} else if (node instanceof PairOpBox) {
+                newNode = node.copyBox(map).addToGroup(newWrapper);
+            } else if (node instanceof PairWrapper) {
+                newNode = node.copyPair(map).addToGroup(newWrapper);
+            } else {
+				newNode = node.copy().addToGroup(newWrapper);
+				map.set(node.key, newNode.key);
+			}
+        }
+        
+        for (let link of this.pair.links) {
+			var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort, link.toPort).addToGroup(newPair);
+			newLink.reverse = link.reverse;
+		}
+		for (let link of this.links) {
+			var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort, link.toPort).addToGroup(newWrapper);
+			newLink.reverse = link.reverse;
+		}
+        
+        return newWrapper;
+    }
 }

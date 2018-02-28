@@ -5,13 +5,9 @@ class If extends Node {
 	}
 
 	transition(token, link) {
-        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-            token.determineRedraw(this.redrawFlag);
-        } else {
-            token.redraw = false;
-        }
 		if (link.to == this.key) {
 			token.dataStack.push(CompData.PROMPT);
+            token.determineRedraw();
 			return this.findLinksOutOf("w")[0];
 		}
 		else if (link.from == this.key && link.fromPort == "w") {
@@ -19,12 +15,14 @@ class If extends Node {
 				token.dataStack.pop();
 				token.rewriteFlag = RewriteFlag.F_IF;
 				token.forward = true;
+                token.determineRedraw();
 				return this.findLinksOutOf("n")[0];
 			}
 			else if (token.dataStack.last() == false) {
 				token.dataStack.pop();
 				token.rewriteFlag = RewriteFlag.F_IF;
 				token.forward = true;
+                token.determineRedraw();
 				return this.findLinksOutOf("e")[0];
 			}
 		} 

@@ -5,7 +5,7 @@ class Start extends Node {
 	}
 	
 	transition(token) {
-        token.determineRedraw(this.redrawFlag);
+        token.redraw = true;
 		if (token.link == null && token.dataStack.last() == CompData.PROMPT) {
 			token.forward = true;
 			return this.findLinksOutOf(null)[0];

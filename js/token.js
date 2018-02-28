@@ -33,37 +33,46 @@ class MachineToken {
 		this.rewriteFlag = RewriteFlag.EMPTY;
 		this.dataStack = [CompData.PROMPT];
 		this.boxStack = [];
-        this.redrawFlag = RedrawFlag.NONE;
+        this.redrawStack = [RedrawFlag.NONE];
+        this.redrawStackIndex = 0;
         
         this.weakMade = false;
         this.redraw = false;
-        this.lastRedrawCounter = 0;
 	}
     
-    determineRedraw(newFlag) {
-        if(newFlag == RedrawFlag.INOP) {
-            if(this.redrawFlag != RedrawFlag.INOP) {
-                //gone into a pair operation
-                this.redrawFlag = RedrawFlag.INOP;
-                this.lastRedrawCounter++;
-                this.redraw = true;
-                return;
-            }
+    pushRedrawStack(flag) {
+        this.redrawStack.push(flag);
+        this.redrawStackIndex++;
+    }
+    
+    popRedrawStack() {
+        this.redrawStackIndex--;
+        return this.redrawStack.pop();
+    }
+    
+    peekRedrawStack() {
+        return this.redrawStack[this.redrawStackIndex];
+    }
+    
+    determineRedraw() {
+        this.redraw = (this.peekRedrawStack() == RedrawFlag.NONE);
+    }
+    
+    //only call when bottomFlag < topFlag
+    upChangeTransition(topFlag) {
+        this.redraw = false;
+        if(topFlag > this.peekRedrawStack()) {
+            this.pushRedrawStack(topFlag);
+            return true;
         }
-        
-        if(this.redrawFlag == RedrawFlag.INOP) {
-            if(++this.lastRedrawCounter == 9) {
-                this.redrawFlag = RedrawFlag.NONE;
-                this.lastRedrawCounter = 0;
-                this.redraw = true;
-                return;
-            }
-            this.redraw = false;
-            return;
+        return false;
+    }
+    
+    downChangeTransition(topFlag) {
+        if(topFlag == this.peekRedrawStack()) {
+            this.popRedrawStack();
         }
-        
-        this.redrawFlag = newFlag;
-        this.redraw = true;
+        this.determineRedraw();
     }
 }
 

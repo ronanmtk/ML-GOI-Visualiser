@@ -5,11 +5,7 @@ class Contract extends Expo {
 	}
 
 	transition(token, link) {
-        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-            token.determineRedraw(this.redrawFlag);
-        } else {
-            token.redraw = false;
-        }
+        token.determineRedraw();
 		if (link.to == this.key) {
 			token.boxStack.push(link);
 			token.rewriteFlag = RewriteFlag.F_C;
@@ -43,11 +39,7 @@ class Contract extends Expo {
 				} 
 			}
 			
-            if (this.redrawFlag == RedrawFlag.NONE) {
-                token.determineRedraw(this.redrawFlag);
-            } else {
-                token.redraw = false;
-            }
+            token.determineRedraw();
 			token.rewrite = false;
 			return nextLink;
 		}

@@ -8,16 +8,13 @@ class Recur extends Expo {
 	transition(token, link) {
 		if (link.to == this.key) {
 			token.rewriteFlag = RewriteFlag.F_RECUR;
-            if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-                token.determineRedraw(this.redrawFlag);
-            } else {
-                token.redraw = false;
-            }
+            token.determineRedraw();
 			return this.findLinksOutOf("e")[0];
 		}
 	}
 
 	rewrite(token, nextLink) {
+        token.redraw = false;
 		if (token.rewriteFlag == RewriteFlag.F_RECUR && nextLink.from == this.key) {
 			token.rewriteFlag = RewriteFlag.EMPTY;
 
@@ -39,17 +36,11 @@ class Recur extends Expo {
 			oldGroup.delete();
 
 			token.rewrite = true;
-            if (this.redrawFlag == RedrawFlag.NONE) {
-                token.determineRedraw(this.redrawFlag);
-            } else {
-                token.redraw = false;
-            }
 			return nextLink;
 		}
 
 		else if (token.rewriteFlag == RewriteFlag.EMPTY) {
 			token.rewrite = false;
-            token.redraw = false;
 			return nextLink;
 		}
 	}

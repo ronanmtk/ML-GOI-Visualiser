@@ -38,6 +38,9 @@ class GoIMachine {
 			var param = ast.param;
 			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
 			var abs = new Abs(redrawFlag).addToGroup(wrapper.box);
+            if(ast.exit) {
+                abs.exit = true;
+            }
 			var term = this.toGraph(ast.body, wrapper.box, displayFlag, redrawFlag);
 			new Link(wrapper.prin.key, abs.key, "n", "s").addToGroup(wrapper);
 
@@ -82,7 +85,7 @@ class GoIMachine {
             else {
                 lGroup = group;
                 lDisplayFlag = DisplayFlag.NONE;
-                lRedrawFlag = RedrawFlag.NONE;
+                lRedrawFlag = redrawFlag;
             }
 			var app = new App(redrawFlag).addToGroup(group);
 			//lhs
@@ -141,7 +144,7 @@ class GoIMachine {
 		}
         
         else if (ast instanceof Pair) {
-            //var box = dev ? new Group(true).addToGroup(group) : new PairBox().addToGroup(group);;
+            var newGroup = new PairWrapper().addToGroup(group);
             
             //church encoding of pair
             var pairAst = new Application(new Identifier(0,"z"), new Identifier(2,"pair1"));
@@ -152,7 +155,7 @@ class GoIMachine {
             pairAst = new Application(pairAst,ast.fst);
             pairAst = new Application(pairAst,ast.snd);
             
-            var pair = this.toGraph(pairAst, group, DisplayFlag.PAIRSND, RedrawFlag.NONE);
+            var pair = this.toGraph(pairAst, newGroup, DisplayFlag.PAIRSND, RedrawFlag.NONE);
             return new Term(pair.prin, pair.auxs);
         }
         
@@ -161,7 +164,7 @@ class GoIMachine {
             var der = new Der(null, redrawFlag).addToGroup(group);
             
             var pairOpAst = (ast.isFst ? new Identifier(1,"x") : new Identifier(0,"y"));
-            pairOpAst = new Abstraction("y",pairOpAst);
+            pairOpAst = new Abstraction("y",pairOpAst, true);
             pairOpAst = new Abstraction("x",pairOpAst);
             pairOpAst = new Application(new Identifier(0,"p"),pairOpAst);
             pairOpAst = new Abstraction("p",pairOpAst);
@@ -252,6 +255,7 @@ class GoIMachine {
 				else {
 					this.gc.collect();
 					this.token.setLink(null);
+                    this.token.redraw = true;
 					play = false;
 					playing = false;
 					finished = true;
@@ -298,9 +302,9 @@ var DisplayFlag = {
 }
 
 var RedrawFlag = {
-    NONE: '',
-    INPAIR: 'INPAIR',
-    INOP: 'INOP'
+    NONE: 0,
+    INPAIR: 1,
+    INOP: 2
 }
 
 define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op'

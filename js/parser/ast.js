@@ -3,9 +3,10 @@ class Abstraction {
    * param here is the name of the variable of the abstraction. Body is the
    * subtree  representing the body of the abstraction.
    */
-  constructor(param, body) {
+  constructor(param, body, exit) {
     this.param = param;
     this.body = body;
+    this.exit = exit;
   }
 }
 

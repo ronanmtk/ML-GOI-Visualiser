@@ -11,10 +11,14 @@ class Promo extends Expo {
 			return this.findLinksOutOf(null)[0];
 		}
 		else if (link.from == this.key) {
-            if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-                token.determineRedraw(this.redrawFlag);
-            } else {
-                token.redraw = false;
+            token.redraw = false;
+            var otherEnd = this.graph.findNodeByKey(link.to);
+            if (otherEnd.redrawFlag == this.redrawFlag) {
+                if (this.redrawFlag == token.peekRedrawStack() && otherEnd instanceof Abs) {
+                    token.redraw = true;
+                }
+            } else if (otherEnd.redrawFlag > this.redrawFlag) {
+                token.downChangeTransition(otherEnd.redrawFlag);
             }
 			return this.findLinksInto(null)[0];
 		}

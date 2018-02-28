@@ -5,21 +5,20 @@ class App extends Node {
 	}
 	
 	transition(token, link) {
-        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-            token.determineRedraw(this.redrawFlag);
-        } else {
-            token.redraw = false;
-        }
 		if (link.to == this.key) {
 			token.dataStack.push(CompData.PROMPT);
+            token.determineRedraw();
 			return this.findLinksOutOf("e")[0];
-
-			//token.dataStack.push(CompData.R);
-			//return this.findLinksOutOf("w")[0];
 		}
 		else if (link.from == this.key && link.fromPort == "e") {
 			token.dataStack.pop();
 			token.dataStack.push(CompData.R);
+            var otherFlag = this.graph.findNodeByKey(link.to).redrawFlag;
+            if(otherFlag > this.redrawFlag) {
+                token.downChangeTransition(otherFlag);
+            } else {
+                token.determineRedraw();
+            }
 			token.forward = true;
 			return this.findLinksOutOf("w")[0];
 		}

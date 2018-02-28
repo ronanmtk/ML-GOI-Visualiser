@@ -125,6 +125,12 @@ class PairBox extends Group {
         return "%%%"+this.key;
     }
     
+    addToGroup(wrapper) {
+        wrapper.addNode(this, true);
+        this.group = wrapper;
+        return this;
+    }
+    
 }
 
 class PairOpBox extends Group {
@@ -135,8 +141,23 @@ class PairOpBox extends Group {
         this.label = label;
     }
     
-    copy(graph) {
-        //As with box, should be in a wrapper so this should never directly be called
+    copyBox(map) {
+        var boxCopy = new PairOpBox(this.label);
+        for(let node of this.nodes) {
+            if(node instanceof BoxWrapper) {
+                node.copyBox(map).addToGroup(boxCopy);
+            } else {
+                var newNode = node.copy().addToGroup(boxCopy);
+                map.set(this.key, newNode.key);
+            }
+        }
+        
+        for (let link of this.links) {
+            var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort,                 link.toPort).addToGroup(boxCopy);
+            newLink.reverse = link.reverse;
+        }
+        
+        return boxCopy;
     }
     
     duplicate(nodeMap, displayGraph) {

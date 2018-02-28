@@ -6,12 +6,8 @@ class UnOp extends Node {
 	}
 
 	transition(token, link) {
-        if (this.graph.findNodeByKey(link.from).redrawFlag == this.redrawFlag) {
-            token.determineRedraw(this.redrawFlag);
-        } else {
-            token.redraw = false;
-        }
 		if (link.to == this.key) {
+            token.determineRedraw();
 			token.dataStack.push(CompData.PROMPT);
 			return this.findLinksOutOf(null)[0];
 		}
@@ -21,6 +17,7 @@ class UnOp extends Node {
 						 token.dataStack.pop();
 				token.dataStack.push(this.unOpApply(this.subType, v1));
 				token.rewriteFlag = RewriteFlag.F_OP;
+                token.determineRedraw();
 				return this.findLinksInto(null)[0];
 			}
 		}
@@ -40,11 +37,7 @@ class UnOp extends Node {
 
 				token.rewriteFlag = RewriteFlag.F_PROMO;
 				token.rewrite = true;
-                if (this.redrawFlag == RedrawFlag.NONE) {
-                    token.determineRedraw(this.redrawFlag);
-                } else {
-                    token.redraw = false;
-                }
+                token.redraw = (this.redrawFlag == RedrawFlag.NONE);
 				return newLink;
 			} else {
                 token.redraw = false;

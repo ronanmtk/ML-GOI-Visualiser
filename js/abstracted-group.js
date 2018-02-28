@@ -22,10 +22,10 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
             for(let link of node.findLinksOutOf()) {
                 if(!this.sameLevel(nodeKey, link.to) && !this.atHigherLevelThan(link.to)) {
                     this.addUpLink(link);
-                    if(node instanceof Pax) {
+                    if(node instanceof Pax || node instanceof Contract) {
                         if(node.name == "pair1") {
                             link.changeFrom(link.from, "w");
-                        } else {
+                        } else if(node.name == "pair2") {
                             link.changeFrom(link.from, "e");
                         }
                     }

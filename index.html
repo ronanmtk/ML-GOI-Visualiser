@@ -22,6 +22,9 @@
                         case "church-pair": prog = church_pair_prog; break;
                         case "pair-eg": prog = pair_eg_prog; break;
                         case "fancy-pair": prog = fancy_pair_prog; break;
+                        case "fv-pair": prog = fv_pair_prog; break;
+                        case "church-list": prog = church_list_prog; break;
+                        case "sum-list": prog = sum_list_prog; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
@@ -41,6 +44,9 @@
                         <option value="church-pair">Church Pairs</option>
                         <option value="pair-eg">Pair Operations</option>
                         <option value="fancy-pair">Fancy Pairs</option>
+                        <option value="fv-pair">Pair as Free Variable</option>
+                        <option value="church-list">[5;12]</option>
+                        <option value="sum-list">Sum List</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">
@@ -59,7 +65,7 @@
                     </div>
                     <div id="graph-options">
                         <form id="options" action="">
-                            <input type="radio" name="graph-display" value="hide-detail" checked="checked"> Hide detail    
+                            <input type="radio" name="graph-display" value="hide-detail" checked> Hide detail    
                             <input type="radio" name="graph-display" value="show-all"> Show all
                         </form>
                     </div>

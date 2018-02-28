@@ -5,7 +5,7 @@ class Const extends Node {
 	}
 	
 	transition(token, link) {
-        token.redraw = false;
+        token.determineRedraw();
 		if (token.dataStack.last() == CompData.PROMPT && token.dataStack.pop()) {
 			token.dataStack.push(this.name);
 			token.forward = false;

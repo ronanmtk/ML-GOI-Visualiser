@@ -11,7 +11,7 @@ class Pax extends Expo {
 	}
     
     transition(token, link) {
-        this.redraw = false;
+        token.redraw = false;
         return super.transition(token, link);
     }
 
