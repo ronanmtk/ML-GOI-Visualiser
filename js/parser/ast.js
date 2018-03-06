@@ -3,10 +3,10 @@ class Abstraction {
    * param here is the name of the variable of the abstraction. Body is the
    * subtree  representing the body of the abstraction.
    */
-  constructor(param, body, exit) {
+  constructor(param, body, transitionFlag) {
     this.param = param;
     this.body = body;
-    this.exit = exit;
+    this.transitionFlag = transitionFlag;
   }
 }
 
@@ -66,17 +66,18 @@ class IfThenElse {
 }
 
 class Pair {
-  constructor(fst, snd) {
+  constructor(fst, snd, listEnter) {
     this.fst = fst;
     this.snd = snd;
+    this.listEnter = listEnter;
   }
 }
 
 class PairOp {
-    constructor(isFst, pair) {
-        this.isFst = isFst;
-        this.pair = pair;
-    }
+  constructor(isFst, pair) {
+    this.isFst = isFst;
+    this.pair = pair;
+  }
 }
 
 class Recursion {
@@ -84,5 +85,29 @@ class Recursion {
     this.p1 = p1;
     this.p2 = p2;
     this.body = body;
+  }
+}
+
+class List {
+  constructor(vals) {
+    this.vals = vals;
+  }
+}
+
+class EmptyList {
+  constructor() {}
+}
+
+class Cons {
+  constructor(head, tail) {
+    this.head = head;
+    this.tail = tail;
+  }
+}
+
+class ListOp {
+  constructor(name, list) {
+    this.name = name;
+    this.list = list;
   }
 }

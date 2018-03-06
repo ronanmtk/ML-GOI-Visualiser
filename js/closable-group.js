@@ -38,28 +38,36 @@ class ClosableGroup extends SubGraph {
     }
     
     displayNodes(hide) {
-        if(!this.open && hide) {
-            this.root.addDisplayNode(this.key);
-            return this.closed;
+        if(this.internalNodes.length != 0) {
+            if(!this.open && hide) {
+                this.root.addDisplayNode(this.key);
+                return this.closed;
+            } else {
+                for(let node of this.internalNodes) {
+                    this.root.addDisplayNode(node);
+                }
+                return this.completeDotTemplates(hide);
+            }    
         } else {
-            for(let node of this.internalNodes) {
-                this.root.addDisplayNode(node);
-            }
-            return this.completeDotTemplates(hide);
+            return "";
         }
     }
     
     getLinksToDisplay(hide) {
-        if(this.open || !hide) {
-            for(let link of this.openLinks) {
+        if(this.internalNodes.length != 0) {
+            if(this.open || !hide) {
+                for(let link of this.openLinks) {
+                    this.root.addDisplayLink(link);
+                }
+                for(let key of this.children.keys()) {
+                    this.children.get(key).getLinksToDisplay(hide);
+                }
+            }
+            for(let link of this.upLinks) {
                 this.root.addDisplayLink(link);
             }
-            for(let key of this.children.keys()) {
-                this.children.get(key).getLinksToDisplay(hide);
-            }
-        }
-        for(let link of this.upLinks) {
-            this.root.addDisplayLink(link);
+        } else {
+            return "";
         }
     }
 }

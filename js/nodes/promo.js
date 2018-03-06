@@ -14,8 +14,16 @@ class Promo extends Expo {
             token.redraw = false;
             var otherEnd = this.graph.findNodeByKey(link.to);
             if (otherEnd.redrawFlag == this.redrawFlag) {
-                if (this.redrawFlag == token.peekRedrawStack() && otherEnd instanceof Abs) {
-                    token.redraw = true;
+                if (otherEnd instanceof Abs) {
+                    if(otherEnd.transitionFlag == TransitionFlag.LISTENTER) {
+                        otherEnd.transitionFlag = TransitionFlag.NONE; //use once
+                        this.transitionFlag = TransitionFlag.LISTEXIT;
+                        token.redraw = (token.peekRedrawStack() == RedrawFlag.INLIST);
+                    } else if (this.redrawFlag == token.peekRedrawStack()) {
+                        token.redraw = (this.redrawFlag > RedrawFlag.NONE);
+                    } else if (otherEnd.transitionFlag == TransitionFlag.LISTOPENTER) {
+                        token.redraw = (token.peekRedrawStack() == RedrawFlag.INLISTOP);
+                    }
                 }
             } else if (otherEnd.redrawFlag > this.redrawFlag) {
                 token.downChangeTransition(otherEnd.redrawFlag);
@@ -47,9 +55,9 @@ class Promo extends Expo {
 						// this will not happen as the C-node should have taken care of it
 					}
 					else {
-						var newBoxWrapper = this.group.copy().addToGroup(this.group.group);
-						Term.joinAuxs(this.group.auxs, newBoxWrapper.auxs, newBoxWrapper.group, this.redrawFlag);
-						prev.findLinksOutOf(null)[0].changeTo(newBoxWrapper.prin.key, prev.findLinksOutOf(null)[0].toPort);
+                        var newBoxWrapper = this.group.copy().addToGroup(this.group.group);
+                        Term.joinAuxs(this.group.auxs, newBoxWrapper.auxs, newBoxWrapper.group, this.redrawFlag);
+                        prev.findLinksOutOf(null)[0].changeTo(newBoxWrapper.prin.key, prev.findLinksOutOf(null)[0].toPort);
 						link.changeTo(this.key, "s");
 					}
 					token.rewriteFlag = RewriteFlag.F_PROMO;
@@ -77,16 +85,4 @@ class Promo extends Expo {
 	copy() {
 		return new Promo(this.redrawFlag);
 	}
-    
-    duplicate(nodeMap, displayGraph) {
-        var newNode = this.copy();
-        nodeMap.set(this.key, newNode);
-        if(this.focus) newNode.changeFocus(true);
-        if(newNode != null) {
-            this.graph.removeNode(newNode);
-            newNode.addToGraph(displayGraph, this.key);
-            nodeMap.set(this.key, newNode);
-        }
-        return newNode;
-    }
 }

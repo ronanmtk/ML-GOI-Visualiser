@@ -4,6 +4,7 @@ class GraphShot extends SubGraph {
         this.graph = graph; //do not use after dot creation - wipe it??
         this.key = "root";
         this.displayNodes = [];
+        this.forcedNodes = [];
         this.displayLinks = [];
         this.build(graph, width, height);
     }
@@ -21,6 +22,10 @@ class GraphShot extends SubGraph {
             +'\n';
         
         this.dot += graph.child.draw('\n  ', this, this);
+        
+        for(let node of this.forcedNodes) {
+            this.dot += this.graph.findNodeByKey(node).makeDot('\n  ');
+        }
         
         //displaying top level links and matching children's links
         for(let node of this.internalNodes) {
@@ -56,6 +61,10 @@ class GraphShot extends SubGraph {
         if(!(changed && (newLink.to == newLink.from)))
             this.displayLinks.push(newLink);
         
+    }
+    
+    addForcedNode(key) {
+        this.forcedNodes.push(key);
     }
     
     addDisplayNode(key) {

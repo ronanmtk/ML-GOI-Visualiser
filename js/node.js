@@ -12,6 +12,8 @@ class Node {
 		this.graph = null;
 		this.group = null;
         this.displayGroup = null;
+        this.transitionFlag = TransitionFlag.NONE;
+        this.forceDraw = false;
 		this.width = null;
 		this.height = null;
 		this.links = [];
@@ -78,6 +80,7 @@ class Node {
     
     duplicate(nodeMap, displayGraph) {
         var newNode = this.copy();
+        newNode.forceDraw = this.forceDraw;
         nodeMap.set(this.key, newNode);
         if(this.focus) newNode.changeFocus(true);
         if(newNode != null) {
@@ -92,7 +95,7 @@ class Node {
         this.focus = value;
         if(this.group) this.group.open = true;
     }
-
+    
 	// also delete any connected links
 	delete() {
         if(this.group) {
@@ -108,6 +111,12 @@ class Node {
 
     addToSubgraph(subgraph) {
         if(this.linkedToStart()) {
+            if(this.forceDraw) {
+                subgraph.root.addForcedNode(this.key);
+                subgraph.root.addInternalNode(this.key);
+                this.displayGroup = subgraph.root;
+                return false;
+            }
             subgraph.addInternalNode(this.key);    
             this.displayGroup = subgraph;
             return true;
@@ -117,22 +126,26 @@ class Node {
     
 	draw(level, snapshot, subgraph) {
         if(this.addToSubgraph(subgraph)) {
-            var str = level + this.key + '[label="' + this.text; 
-            if (showKey)
-                str += ':' + this.key;
-            str += '"';
-            if (this.shape != null)
-                str += ',shape=' + this.shape;
-            if (this.width != null)
-                str += ',width=' + this.width;
-            if (this.height != null)
-                str += ',height=' + this.height;
-            if (this.focus)
-                str += ',style=filled,color=green3,fontcolor=white';
-            return str += '];'   
+            return this.makeDot(level);   
         }
         return "";
 	}
+    
+    makeDot(level) {
+        var str = level + this.key + '[label="' + this.text; 
+        if (showKey)
+            str += ':' + this.key;
+        str += '"';
+        if (this.shape != null)
+            str += ',shape=' + this.shape;
+        if (this.width != null)
+            str += ',width=' + this.width;
+        if (this.height != null)
+            str += ',height=' + this.height;
+        if (this.focus)
+            str += ',style=filled,color=green3,fontcolor=white';
+        return str += '];'
+    }
 
 	// machine instructions
 	transition(token, link) {

@@ -39,7 +39,6 @@ class If extends Node {
 				nextLink.changeFrom(downLink.from, downLink.fromPort);
 				var weak = new Weak(this.graph.findNodeByKey(otherLink.to).name, RedrawFlag.NONE).addToGroup(this.group);
 				otherLink.changeFrom(weak.key, "n");
-                token.weakMade = true;
 				this.delete();
 				left.group.delete();
 			}
@@ -58,16 +57,4 @@ class If extends Node {
 	copy() {
 		return new If(this.redrawFlag);
 	}
-    
-    duplicate(nodeMap, displayGraph) {
-        var newNode = this.copy();
-        nodeMap.set(this.key, newNode);
-        if(this.focus) newNode.changeFocus(true);
-        if(newNode != null) {
-            this.graph.removeNode(newNode);
-            newNode.addToGraph(displayGraph, this.key);
-            nodeMap.set(this.key, newNode);
-        }
-        return newNode;
-    }
 }

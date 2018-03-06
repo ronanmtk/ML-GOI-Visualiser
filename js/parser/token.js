@@ -16,9 +16,12 @@ class Token {
   'LAMBDA',
   'LPAREN',
   'RPAREN',
+  'LSPAREN',
+  'RSPAREN',
   'LCID',
   'DOT', 
   'COMMA',
+  'SEMICOLON',
   
   'APP',
 
@@ -37,6 +40,9 @@ class Token {
   'NOT',
   'FST',
   'SND',
+  'HEAD',
+  'TAIL',
+  'ISNIL',
 
   'AND',
   'OR',

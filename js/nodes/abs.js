@@ -2,14 +2,13 @@ class Abs extends Node {
 
 	constructor(redrawFlag) {
 		super(redrawFlag, "ellipse", "fun");
-        this.exit = false;
 	}
 	
 	transition(token, link) {
 		if (link.to == this.key && link.toPort == "s") {
             var otherEnd = this.graph.findNodeByKey(link.from);
             if(otherEnd.redrawFlag < this.redrawFlag && otherEnd instanceof App) {
-                token.upChangeTransition(this.redrawFlag)
+                token.upChangeTransition(this.redrawFlag);
             } else {
                 token.determineRedraw();
             }
@@ -33,10 +32,18 @@ class Abs extends Node {
 			token.rewriteFlag = RewriteFlag.EMPTY;
             token.redraw = false;
 			var app = this.graph.findNodeByKey(this.findLinksInto("s")[0].from);
+            var openDisplayGroup = false;
 			if (app instanceof App) {
                 if (this.redrawFlag == token.peekRedrawStack()) {
-                    if(this.redrawFlag == RedrawFlag.INOP && this.exit) { //exit conditions
+                    if((this.transitionFlag == TransitionFlag.OPEXIT && this.redrawFlag == RedrawFlag.INOP)
+                       || (this.transitionFlag == TransitionFlag.ISNILEXIT && this.redrawFlag == RedrawFlag.INLISTISNIL)) {
+                        openDisplayGroup = (this.transitionFlag == TransitionFlag.ISNILEXIT);
                         token.downChangeTransition(this.redrawFlag);
+                        token.determineRedraw();   
+                    }
+                } else {
+                    if (this.transitionFlag == TransitionFlag.LISTOPEXIT && token.peekRedrawStack() == RedrawFlag.INLISTOP) {
+                        token.downChangeTransition(this.redrawFlag, true, RedrawFlag.INLISTOP);
                         token.determineRedraw();
                     }
                 }
@@ -55,6 +62,16 @@ class Abs extends Node {
 				if (otherNode instanceof Expo) 
 					otherNextLink.fromPort = "n";
 				otherNextLink.changeToGroup(appOtherLink.group);
+                
+                if(openDisplayGroup) {
+                    var promo = this.graph.findNodeByKey(nextLink.to);
+                    if(promo instanceof Promo) {
+                        var constant = this.graph.findNodeByKey(promo.findLinksOutOf()[0].to);
+                    }
+                    if(constant instanceof Const) {
+                        constant.forceDraw = true;
+                    }
+                }
 				
 				this.delete();
 				app.delete();
@@ -74,18 +91,8 @@ class Abs extends Node {
 	}
 
 	copy() {
-		return new Abs(this.redrawFlag);
+		var newAbs = new Abs(this.redrawFlag);
+        newAbs.transitionFlag = this.transitionFlag;
+        return newAbs;
 	}
-    
-    duplicate(nodeMap, displayGraph) {
-        var newNode = this.copy();
-        nodeMap.set(this.key, newNode);
-        if(this.focus) newNode.changeFocus(true);
-        if(newNode != null) {
-            this.graph.removeNode(newNode);
-            newNode.addToGraph(displayGraph, this.key);
-            nodeMap.set(this.key, newNode);
-        }
-        return newNode;
-    }
 }

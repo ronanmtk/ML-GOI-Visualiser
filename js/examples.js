@@ -23,7 +23,7 @@ var fv_pair_prog = 'let f = λl. \n'+
 
 var church_list_prog = '(λz. fst (snd z)) \n'+
                        '((λh. λt. pair( false, pair(h, t) )) \n'+
-                       '12 ((λh. λt. pair( false, pair(h, t) )) 5 pair(true,true)) )';
+                       '5 ((λh. λt. pair( false, pair(h, t) )) 12 pair(true,true)) )';
 
 var sum_list_prog = 'let sum = rec(f,list). \n'+
                     'if (fst list) \n'+
@@ -32,4 +32,15 @@ var sum_list_prog = 'let sum = rec(f,list). \n'+
                     'in \n'+
                     'sum \n'+
                     '((λh. λt. pair( false, pair(h, t) )) \n'+
-                    '12 ((λh. λt. pair( false, pair(h, t) )) 5 pair(true,true)) )'; 
+                    '5 ((λh. λt. pair( false, pair(h, t) )) 12 pair(true,true)) )'; 
+
+var sum_list_2_prog = 'let sum = rec(f,list). \n'+
+                      '  if (isnil list) \n'+
+                      '  then 0 \n'+
+                      '  else \n'+
+                      '    ( \n'+
+                      '     let x = (head list) in \n'+
+                      '     let xs = (tail list) in \n'+
+                      '     ( x + (f xs) ) \n'+
+                      '    ) \n'+
+                      'in sum [5;12]';

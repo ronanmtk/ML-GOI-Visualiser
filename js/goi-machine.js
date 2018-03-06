@@ -38,9 +38,7 @@ class GoIMachine {
 			var param = ast.param;
 			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
 			var abs = new Abs(redrawFlag).addToGroup(wrapper.box);
-            if(ast.exit) {
-                abs.exit = true;
-            }
+            abs.transitionFlag = ast.transitionFlag ? ast.transitionFlag : TransitionFlag.NONE;
 			var term = this.toGraph(ast.body, wrapper.box, displayFlag, redrawFlag);
 			new Link(wrapper.prin.key, abs.key, "n", "s").addToGroup(wrapper);
 
@@ -72,15 +70,20 @@ class GoIMachine {
             var lGroup;
             var lDisplayFlag;
             var lRedrawFlag;
-            if (displayFlag == DisplayFlag.PAIRFST) {
-                lGroup = dev ? new Group(true).addToGroup(group) : new PairBox().addToGroup(group);
+            if (displayFlag == DisplayFlag.PAIRFST || displayFlag == DisplayFlag.APPHEAD) {
                 lDisplayFlag = DisplayFlag.NONE;
-                lRedrawFlag = RedrawFlag.INPAIR;
+                if(displayFlag == DisplayFlag.PAIRFST) {
+                    lGroup = dev ? new Group(true).addToGroup(group) : new PairBox().addToGroup(group);
+                    lRedrawFlag = RedrawFlag.INPAIR;
+                } else {
+                    lGroup = dev ? new Group(true).addToGroup(group) : new ConsBox().addToGroup(group);
+                    lRedrawFlag = RedrawFlag.INLIST;
+                }
             }
-            else if (displayFlag == DisplayFlag.PAIRSND) {
+            else if (displayFlag == DisplayFlag.PAIRSND || displayFlag == DisplayFlag.APPTAIL) {
                 lGroup = group;
-                lDisplayFlag = DisplayFlag.PAIRFST;
-                lRedrawFlag = RedrawFlag.NONE;
+                lRedrawFlag = redrawFlag;
+                lDisplayFlag = displayFlag - 1; //PAIRSND -> PAIRFST && APPTAIL -> APPHEAD
             } 
             else {
                 lGroup = group;
@@ -98,7 +101,7 @@ class GoIMachine {
 			new Link(app.key, der.key, "w", "s").addToGroup(group);
 			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
 			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group, redrawFlag));
-		} //start of new way of representing pairs implemented for application above 
+		} 
 
 		else if (ast instanceof Constant) {
 			var wrapper = BoxWrapper.create(redrawFlag).addToGroup(group);
@@ -144,41 +147,105 @@ class GoIMachine {
 		}
         
         else if (ast instanceof Pair) {
-            var newGroup = new PairWrapper().addToGroup(group);
-            
             //church encoding of pair
+            var transitionFlag = ast.listEnter ? TransitionFlag.LISTENTER : TransitionFlag.NONE;
             var pairAst = new Application(new Identifier(0,"z"), new Identifier(2,"pair1"));
             pairAst = new Application(pairAst, new Identifier(1,"pair2"));
-            pairAst = new Abstraction("z",pairAst);
+            pairAst = new Abstraction("z",pairAst,transitionFlag);
             pairAst = new Abstraction("pair2",pairAst);
             pairAst = new Abstraction("pair1",pairAst);
             pairAst = new Application(pairAst,ast.fst);
             pairAst = new Application(pairAst,ast.snd);
             
-            var pair = this.toGraph(pairAst, newGroup, DisplayFlag.PAIRSND, RedrawFlag.NONE);
+            var newGroup = (dev || (displayFlag != DisplayFlag.INELIST)) ? group : new EmptyListBox().addToGroup(group);
+            var pair = this.toGraph(pairAst, newGroup, DisplayFlag.PAIRSND, redrawFlag);
             return new Term(pair.prin, pair.auxs);
         }
         
         else if (ast instanceof PairOp) {
-            var box = dev ? new Group(true).addToGroup(group) : new PairOpBox(ast.isFst ? "fst" : "snd").addToGroup(group);
+            var wrapper = dev || displayFlag != DisplayFlag.ISNIL ? group : new ListOpBox("isnil").addToGroup(group);
+            var opFlag = displayFlag == DisplayFlag.ISNIL ? RedrawFlag.INLISTISNIL : RedrawFlag.INOP;
+            var exitTransitionFlag; 
+            var enterTransitionFlag;
+            if(displayFlag == DisplayFlag.ISNIL) {
+                exitTransitionFlag = TransitionFlag.ISNILEXIT;
+                enterTransitionFlag = TransitionFlag.NONE;
+            } 
+            else if (displayFlag == DisplayFlag.LISTOP) {
+                exitTransitionFlag = TransitionFlag.LISTOPEXIT;
+                enterTransitionFlag = TransitionFlag.LISTOPENTER;
+            }
+            else {
+                exitTransitionFlag = TransitionFlag.OPEXIT;
+                enterTransitionFlag = TransitionFlag.NONE;
+            }
+            
+            var box = dev ? new Group(true).addToGroup(wrapper) : new PairOpBox(ast.isFst ? "fst" : "snd").addToGroup(wrapper);
+            
             var der = new Der(null, redrawFlag).addToGroup(group);
             
             var pairOpAst = (ast.isFst ? new Identifier(1,"x") : new Identifier(0,"y"));
-            pairOpAst = new Abstraction("y",pairOpAst, true);
-            pairOpAst = new Abstraction("x",pairOpAst);
+            pairOpAst = new Abstraction("y",pairOpAst,exitTransitionFlag);
+            pairOpAst = new Abstraction("x",pairOpAst,enterTransitionFlag);
             pairOpAst = new Application(new Identifier(0,"p"),pairOpAst);
             pairOpAst = new Abstraction("p",pairOpAst);
             
-            var pairOp = this.toGraph(pairOpAst, box, displayFlag, RedrawFlag.INOP);
+            //change made here
+            var pairOp = this.toGraph(pairOpAst, box, displayFlag, opFlag);
             new Link(der.key,pairOp.prin.key,"n","s").addToGroup(group);
             
-            var pair = this.toGraph(ast.pair,group, displayFlag, redrawFlag);
+            var pair = this.toGraph(ast.pair,group, DisplayFlag.NONE, redrawFlag);
             
             var app = new App(redrawFlag).addToGroup(group);
             new Link(app.key,der.key,"w","s").addToGroup(group);
             new Link(app.key,pair.prin.key,"e","s").addToGroup(group);
             
             return new Term(app, Term.joinAuxs(pairOp.auxs, pair.auxs, group, redrawFlag));
+        }
+        
+        else if (ast instanceof ListOp) {
+            if(ast.name == "isnil") {
+                return this.toGraph(new PairOp(true, ast.list), group, DisplayFlag.ISNIL, redrawFlag);
+            }
+            
+            else if (ast.name == "head" || ast.name == "tail") {
+                var opGroup = dev ? group : new ListOpBox(ast.name).addToGroup(group);
+                
+                var der = new Der(null, redrawFlag).addToGroup(group);
+                
+                var listOpAst = new Identifier(0,"z");
+                var listOpAst = new PairOp(false, listOpAst);
+                var listOpAst = new PairOp(ast.name == "head", listOpAst);
+                var listOpAst = new Abstraction("z", listOpAst);
+                
+                var listOp = this.toGraph(listOpAst, opGroup, DisplayFlag.LISTOP, RedrawFlag.INLISTOP);
+                new Link(der.key,listOp.prin.key,"n","s").addToGroup(group);
+                
+                var list = this.toGraph(ast.list, group, displayFlag, redrawFlag);
+                
+                var app = new App(redrawFlag).addToGroup(group);
+                new Link(app.key, der.key, "w", "s").addToGroup(group);
+                new Link(app.key, list.prin.key, "e", "s").addToGroup(group);
+                
+                return new Term(app, Term.joinAuxs(listOp.auxs, list.auxs, group, redrawFlag));
+            }
+        }
+        
+        else if (ast instanceof Cons) {
+            var consAst = new Pair(new Identifier(1, "listHead"), new Identifier(0, "listTail"));
+            consAst = new Pair(new Constant(false), consAst, true);
+            consAst = new Abstraction("listTail",consAst);
+            consAst = new Abstraction("listHead",consAst);
+            consAst = new Application(consAst, ast.head);
+            consAst = new Application(consAst, ast.tail);
+            
+            var cons = this.toGraph(consAst, group, DisplayFlag.APPTAIL, redrawFlag);
+            
+            return new Term(cons.prin, cons.auxs);
+        }
+        
+        else if (ast instanceof EmptyList) {
+            return this.toGraph(new Pair(new Constant(true), new Constant(true), true), group, DisplayFlag.INELIST, RedrawFlag.INLIST);
         }
 
 		else if (ast instanceof Recursion) {
@@ -228,11 +295,11 @@ class GoIMachine {
 	// machine step
 	pass(flag, dataStack, boxStack) {	
 		if (!finished) {
-			this.count++;
+			/*this.count++;
 			if (this.count == 200) {
 				this.count = 0;
 				this.gc.collect();
-			}
+			}*/
 
 			var node;
 			if (!this.token.transited) {
@@ -271,10 +338,6 @@ class GoIMachine {
 					this.pass(flag, dataStack, boxStack);
 				}
 				else {
-                    if(this.token.weakMade) {
-                        this.gc.collect();
-                        this.token.weakMade = false;
-                    }
 					this.token.setLink(nextLink);
                     target = this.token.forward ? this.token.link.from : this.token.link.to;
 				    this.token.setNode(this.graph.findNodeByKey(target));
@@ -296,15 +359,33 @@ class GoIMachine {
 }
 
 var DisplayFlag = {
-    NONE: '',
-	PAIRFST: 'pairfst',
-    PAIRSND: 'pairsnd',
+    NONE: 0,
+	PAIRFST: 1,
+    PAIRSND: 2,
+    APPHEAD: 11,
+    APPTAIL: 12,
+    INELIST: 13,
+    ISNIL: 21,
+    LISTOP: 22
 }
 
 var RedrawFlag = {
     NONE: 0,
     INPAIR: 1,
-    INOP: 2
+    INOP: 2,
+    INLIST: 3,
+    INLISTOP: 4,
+    INLISTISNIL: 5
+}
+
+var TransitionFlag = {
+    NONE: 0,
+    OPEXIT: 1,
+    LISTENTER: 2,
+    LISTEXIT: 3,
+    ISNILEXIT: 4,
+    LISTOPENTER: 5,
+    LISTOPEXIT: 6
 }
 
 define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op'

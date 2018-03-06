@@ -36,7 +36,6 @@ class MachineToken {
         this.redrawStack = [RedrawFlag.NONE];
         this.redrawStackIndex = 0;
         
-        this.weakMade = false;
         this.redraw = false;
 	}
     
@@ -68,8 +67,14 @@ class MachineToken {
         return false;
     }
     
-    downChangeTransition(topFlag) {
-        if(topFlag == this.peekRedrawStack()) {
+    /* Function to move down out of a hidden box (e.g. Cons, Pair)
+     * param topFlag the flag of the box we are moving down from, which will only be removed from stack if matched
+     * param force whether to force the downwards transition even if it doesn't match the top of the stack
+     * param flagToMatch what the top of the flag should be if we are forcing the transition
+     */
+    downChangeTransition(topFlag, force, flagToMatch) {
+        var topOfStack = force ? flagToMatch : topFlag;
+        if(topOfStack == this.peekRedrawStack()) {
             this.popRedrawStack();
         }
         this.determineRedraw();

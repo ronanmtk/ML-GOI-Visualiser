@@ -117,6 +117,14 @@ class Parser {
     }
 
   }
+    
+  buildList(vals) {
+    var listAst = new EmptyList();
+    while(vals.length > 0) {
+      listAst = new Cons(vals.pop(), listAst);
+    }
+    return listAst;
+  }
 
   // atom ::= LPAREN term RPAREN
   //        | LCID
@@ -124,11 +132,13 @@ class Parser {
   //        | PAIR LPAREN term COMMA term RPAREN
   //        | FST term
   //        | SND term
+  //        | LSPAREN (term SEMICOLON)* term RSPAREN
+  //        | ISNIL term
+  //        | HEAD term
+  //        | TAIL term
   //        | TRUE
   //        | FALSE
   //        | NOT term
-  //        | LSPAREN int RSPAREN
-  //        | LCPAREN int RCPAREN
   atom(ctx) {
     if (this.lexer.skip(Token.LPAREN)) {
       const term = this.term(ctx);
@@ -151,6 +161,21 @@ class Parser {
       this.lexer.match(Token.RPAREN);
       return new Pair(fstTerm, sndTerm);
     }
+    else if (this.lexer.skip(Token.LSPAREN)) {
+      var values = [];
+      var nextToken = this.lexer.lookahead();
+      while(nextToken.type != Token.RSPAREN) {
+        values.push(this.atom(ctx));
+        nextToken = this.lexer.lookahead();
+        if(nextToken.type == Token.SEMICOLON) {
+            this.lexer.match(Token.SEMICOLON);
+        } else if (nextToken.type != Token.RSPAREN) {
+            this.lexer.fail();
+        }
+      }
+      this.lexer.match(Token.RSPAREN);
+      return this.buildList(values);
+    }
     else if (this.lexer.skip(Token.FST)) {
       const pair = this.atom(ctx);
       return new PairOp(true,pair);
@@ -158,6 +183,18 @@ class Parser {
     else if (this.lexer.skip(Token.SND)) {
       const pair = this.atom(ctx);
       return new PairOp(false,pair);
+    }
+    else if (this.lexer.skip(Token.ISNIL)) {
+      const list = this.atom(ctx);
+      return new ListOp("isnil", list);
+    }
+    else if (this.lexer.skip(Token.HEAD)) {
+      const list = this.atom(ctx);
+      return new ListOp("head", list);
+    }
+    else if (this.lexer.skip(Token.TAIL)) {
+      const list = this.atom(ctx);
+      return new ListOp("tail", list);
     }
     else if (this.lexer.skip(Token.TRUE)) {
       return new Constant(true);

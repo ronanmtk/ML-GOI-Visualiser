@@ -23,9 +23,9 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
                 if(!this.sameLevel(nodeKey, link.to) && !this.atHigherLevelThan(link.to)) {
                     this.addUpLink(link);
                     if(node instanceof Pax || node instanceof Contract) {
-                        if(node.name == "pair1") {
+                        if(node.name == "pair1" || node.name == "listHead") {
                             link.changeFrom(link.from, "w");
-                        } else if(node.name == "pair2") {
+                        } else if(node.name == "pair2" || node.name == "listTail") {
                             link.changeFrom(link.from, "e");
                         }
                     }
