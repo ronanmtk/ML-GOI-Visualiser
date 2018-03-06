@@ -131,6 +131,10 @@ class Node {
         return "";
 	}
     
+    isCopyableBox() {
+        return false;
+    }
+    
     makeDot(level) {
         var str = level + this.key + '[label="' + this.text; 
         if (showKey)

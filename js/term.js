@@ -115,11 +115,9 @@ class BoxWrapper extends Term {
         var pairopboxs = [];
 		for (let node of this.box.nodes) {
 			var newNode;
-            if (node instanceof BoxWrapper) {
+            if (node instanceof BoxWrapper || node.isCopyableBox()) {
 				newNode = node.copyBox(map).addToGroup(newBox);
-			} else if (node instanceof PairOpBox || node instanceof ListOpBox) {
-                newNode = node.copyBox(map).addToGroup(newBox);
-            } else {
+			} else {
 				newNode = node.copy().addToGroup(newBox);
 				map.set(node.key, newNode.key);
 			}

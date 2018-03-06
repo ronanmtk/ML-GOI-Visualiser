@@ -25,7 +25,7 @@
                         case "fv-pair": prog = fv_pair_prog; break;
                         case "church-list": prog = church_list_prog; break;
                         case "sum-list": prog = sum_list_prog; break;
-                        case "sum-list-2": prog = sum_list_2_prog; break;
+                        case "map": prog = map_example_prog; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
@@ -46,9 +46,9 @@
                         <option value="pair-eg">Pair Operations</option>
                         <option value="fancy-pair">Fancy Pairs</option>
                         <option value="fv-pair">Pair as Free Variable</option>
-                        <option value="church-list">head [5;12]</option>
+                        <option value="church-list">Church List</option>
                         <option value="sum-list">Sum List</option>
-                        <option value="sum-list-2">Sum List v2</option>
+                        <option value="map">Map Definition</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">

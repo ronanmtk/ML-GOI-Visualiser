@@ -30,14 +30,14 @@ class Lexer {
     } while (/\s/.test(c));
 
     switch (c) {
-      case 'λ':
+      /*case 'λ':
       case '\\':
         this._token = new Token(Token.LAMBDA);
         break;
 
       case '.':
         this._token = new Token(Token.DOT);
-        break;
+        break;*/
 
       case ',':
         this._token = new Token(Token.COMMA);
@@ -67,7 +67,7 @@ class Lexer {
         this._token = new Token(Token.EOF);
         break;
 
-      case '~':
+      case '!':
         this._token = new Token(Token.NOT);
         break;
 
@@ -90,12 +90,26 @@ class Lexer {
         }
         break;
 
+      case ':':
+        if (this._nextChar() == ':')
+          this._token = new Token(Token.CONS);
+        else {
+          this._index--;
+          this.fail;
+        }
+        break;
+            
       case '+':
         this._token = new Token(Token.PLUS, null, 12);
         break;
 
       case '-':
-        this._token = new Token(Token.SUB, null, 12);
+        if(this._nextChar() == '>') {
+            this._token = new Token(Token.DOT);
+        } else {
+            this._index--;
+            this._token = new Token(Token.SUB, null, 12);
+        }
         break;
 
       case '*':
@@ -134,6 +148,8 @@ class Lexer {
 
           if (str == "let")
             this._token = new Token(Token.LET);
+          else if (str == "fun")
+            this._token = new Token(Token.LAMBDA);
           else if (str == "in")
             this._token = new Token(Token.IN);
           else if (str == "rec")

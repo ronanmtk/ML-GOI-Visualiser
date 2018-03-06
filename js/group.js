@@ -148,7 +148,36 @@ class Box extends DisplayedGroup {
     }
 }
 
-class PairBox extends DisplayedGroup {
+class CopyableBox extends DisplayedGroup {
+    constructor() {
+      super(false);
+    }
+    
+    isCopyableBox() {
+        return true;
+    }
+    
+    copyBox(map) {
+        var boxCopy = this.getBasicCopy();
+        for(let node of this.nodes) {
+            if(node instanceof BoxWrapper || node.isCopyableBox()) {
+                node.copyBox(map).addToGroup(boxCopy);
+            } else {
+                var newNode = node.copy().addToGroup(boxCopy);
+                map.set(node.key, newNode.key);
+            }
+        }
+        
+        for (let link of this.links) {
+            var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort,                 link.toPort).addToGroup(boxCopy);
+            newLink.reverse = link.reverse;
+        }
+        
+        return boxCopy;
+    }
+}
+
+class PairBox extends CopyableBox {
     constructor() {
         super(false);
     }
@@ -173,7 +202,7 @@ class PairBox extends DisplayedGroup {
     
 }
 
-class EmptyListBox extends DisplayedGroup {
+class EmptyListBox extends CopyableBox {
     constructor() {
         super(false);
     }
@@ -187,7 +216,7 @@ class EmptyListBox extends DisplayedGroup {
     }
 }
 
-class ConsBox extends DisplayedGroup {
+class ConsBox extends CopyableBox {
     constructor() {
         super(false);
     }
@@ -201,29 +230,10 @@ class ConsBox extends DisplayedGroup {
     }
 }
 
-class PairOpBox extends DisplayedGroup {
+class PairOpBox extends CopyableBox {
     constructor(label) {
         super(false);
         this.label = label;
-    }
-    
-    copyBox(map) {
-        var boxCopy = new PairOpBox(this.label);
-        for(let node of this.nodes) {
-            if(node instanceof BoxWrapper) {
-                node.copyBox(map).addToGroup(boxCopy);
-            } else {
-                var newNode = node.copy().addToGroup(boxCopy);
-                map.set(this.key, newNode.key);
-            }
-        }
-        
-        for (let link of this.links) {
-            var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort,                 link.toPort).addToGroup(boxCopy);
-            newLink.reverse = link.reverse;
-        }
-        
-        return boxCopy;
     }
     
     getBasicCopy() {
@@ -236,29 +246,10 @@ class PairOpBox extends DisplayedGroup {
     
 }
 
-class ListOpBox extends DisplayedGroup {
+class ListOpBox extends CopyableBox {
     constructor(label) {
         super(false);
         this.label = label;
-    }
-    
-    copyBox(map) {
-        var boxCopy = new ListOpBox(this.label);
-        for(let node of this.nodes) {
-            if(node instanceof BoxWrapper || node instanceof PairOpBox) {
-                node.copyBox(map).addToGroup(boxCopy);
-            } else {
-                var newNode = node.copy().addToGroup(boxCopy);
-                map.set(this.key, newNode.key);
-            }
-        }
-        
-        for (let link of this.links) {
-            var newLink = new Link(map.get(link.from), map.get(link.to), link.fromPort,                 link.toPort).addToGroup(boxCopy);
-            newLink.reverse = link.reverse;
-        }
-        
-        return boxCopy;
     }
     
     getBasicCopy() {

@@ -43,11 +43,11 @@ class Parser {
       return new IfThenElse(cond, t1, t2);
     }
     else if (this.lexer.skip(Token.REC)) {
-      this.lexer.match(Token.LPAREN);
+      //this.lexer.match(Token.LPAREN);
       const id = this.lexer.token(Token.LCID);
-      this.lexer.match(Token.COMMA);
+      //this.lexer.match(Token.COMMA);
       const id2 = this.lexer.token(Token.LCID);
-      this.lexer.match(Token.RPAREN);
+      //this.lexer.match(Token.RPAREN);
       this.lexer.match(Token.DOT);
       const term = this.term([id2].concat([id].concat(ctx)));
       return new Recursion(id, id2, term);
@@ -61,7 +61,7 @@ class Parser {
     return token.type == Token.AND || token.type == Token.OR 
         || token.type == Token.PLUS || token.type == Token.SUB  
         || token.type == Token.MULT || token.type == Token.DIV 
-        || token.type == Token.LTE 
+        || token.type == Token.LTE
   }
 
   parseApplication(ctx, lhs, pred) {
@@ -103,8 +103,15 @@ class Parser {
 
   application(ctx) {
     let lhs = this.atom(ctx);
-    if (this.isBinaryOp(this.lexer.lookahead()))
+    var nextToken = this.lexer.lookahead();
+    if (this.isBinaryOp(nextToken))
       return this.parseApplication(ctx, lhs, 0);
+      
+    if(nextToken.type == Token.CONS) {
+      this.lexer.match(Token.CONS);
+      const tail = this.atom(ctx);
+      return new Cons(lhs, tail);
+    }
 
     while (true) {
       const rhs = this.atom(ctx);
@@ -151,7 +158,7 @@ class Parser {
     } 
     else if (this.lexer.next(Token.INT)) {
       const n = this.lexer.token(Token.INT);
-      return new Constant(n);
+      return new Constant(n, true);
     }
     else if (this.lexer.skip(Token.PAIR)) {
       this.lexer.match(Token.LPAREN);
@@ -197,10 +204,10 @@ class Parser {
       return new ListOp("tail", list);
     }
     else if (this.lexer.skip(Token.TRUE)) {
-      return new Constant(true);
+      return new Constant(true, false);
     } 
     else if (this.lexer.skip(Token.FALSE)) {
-      return new Constant(false);
+      return new Constant(false, false);
     } 
     else if (this.lexer.skip(Token.NOT)) {
       const term = this.term(ctx);
