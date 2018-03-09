@@ -257,8 +257,7 @@ class GoIMachine {
 			var recur = new Recur(redrawFlag).addToGroup(wrapper);
 			wrapper.prin = recur;
 			var box = this.toGraph(new Abstraction(p2, ast.body), wrapper.box, displayFlag, redrawFlag);
-			wrapper.auxs = Array.from(box.auxs);
-			recur.box = box;
+            wrapper.auxs = wrapper.createPaxsOnTopOf(box.auxs);
 
 			new Link(recur.key, box.prin.key, "e", "s").addToGroup(wrapper);
 
@@ -268,13 +267,12 @@ class GoIMachine {
 				var aux = wrapper.auxs[i];
 				if (aux.name == p1) {
 					p1Used = true;
-					auxNode1 = aux;
+                    auxNode1 = this.graph.findNodeByKey(aux.findLinksInto(null)[0].from);
+                    aux.delete();
 					break;
 				}
 			}
-			if (p1Used) {
-				wrapper.auxs.splice(wrapper.auxs.indexOf(auxNode1), 1);
-			} else {
+			if (!p1Used) {
 				auxNode1 = new Weak(p1, redrawFlag).addToGroup(wrapper.box);
 			}
 			new Link(auxNode1.key, recur.key, "nw", "w", true).addToGroup(wrapper);

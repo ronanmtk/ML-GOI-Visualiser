@@ -19,6 +19,7 @@ class Recur extends Expo {
 			token.rewriteFlag = RewriteFlag.EMPTY;
 
 			var wrapper = this.group.copy().addToGroup(this.group);
+            Term.joinAuxs(this.group.auxs, wrapper.auxs, wrapper.group); //added
 			
 			var oldGroup = this.group;
 			var oldBox = this.group.box;
@@ -31,9 +32,7 @@ class Recur extends Expo {
 			var outLink = this.findLinksOutOf("e")[0];
 			outLink.changeFrom(inLink.from, inLink.fromPort);
 
-			Term.joinAuxs(wrapper.auxs, oldBox.auxs, wrapper.group, this.redrawFlag);
-			
-			oldGroup.delete();
+            oldGroup.deleteAndPreserveLink();
 
 			token.rewrite = true;
 			return nextLink;
