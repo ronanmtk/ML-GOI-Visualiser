@@ -17,21 +17,20 @@
                 $('#sm-example').change(function(){
                     var prog;
                     switch($("#sm-example option:selected").val()) {
-                        case "fact": prog = fact_prog; break;
-                        case "basic": prog = basic_prog; break;
-                        case "church-pair": prog = church_pair_prog; break;
-                        case "pair-eg": prog = pair_eg_prog; break;
-                        case "fancy-pair": prog = fancy_pair_prog; break;
-                        case "fv-pair": prog = fv_pair_prog; break;
-                        case "church-list": prog = church_list_prog; break;
-                        case "sum-list": prog = sum_list_prog; break;
-                        case "map": prog = map_example_prog; break;
+                        case "sum1": prog = sum_list; break;
+                        case "sum2": prog = sum_list_2; break;
+                        case "map": prog = map_example; break;
+                        case "mod": prog = mod; break;
+                        case "append": prog = append; break;
+                        case "tris-naive": prog = tris_naive; break;
+                        case "tris": prog = tris; break;
+                        case "rle": prog = run_length_encoding; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
                 });
 
-                $("#ta-program").val(fact_prog);
+                $("#ta-program").val(sum_list);
             });
         </script>
 	</head>
@@ -40,15 +39,14 @@
             <div class="top-wrapper" align="center">
                 <div id="select-code">
                     <select id="sm-example">
-                        <option value="fact" selected>Factorial</option>
-                        <option value="basic">Simplest</option>
-                        <option value="church-pair">Church Pairs</option>
-                        <option value="pair-eg">Pair Operations</option>
-                        <option value="fancy-pair">Fancy Pairs</option>
-                        <option value="fv-pair">Pair as Free Variable</option>
-                        <option value="church-list">Church List</option>
-                        <option value="sum-list">Sum List</option>
-                        <option value="map">Map Definition</option>
+                        <option value="sum1" selected>1a: Summing List</option>
+                        <option value="sum2">1b: Summing List</option>
+                        <option value="map">1c: Map Definition</option>
+                        <option value="mod">2: Mod</option>
+                        <option value="append">3: Append</option>
+                        <option value="tris-naive">4a: Triangular Numbers (Naive)</option>
+                        <option value="tris">4b: Triangular Numbers</option>
+                        <option value="rle">5: Run Length Encoding</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">
