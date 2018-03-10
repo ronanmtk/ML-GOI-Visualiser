@@ -77,6 +77,10 @@ class BinOp extends Node {
 			case BinOpType.Mult: return parseFloat(v1) * parseFloat(v2);
 			case BinOpType.Div: return parseFloat(v1) / parseFloat(v2);
 			case BinOpType.Lte: return parseFloat(v1) <= parseFloat(v2);
+            case BinOpType.Lt: return parseFloat(v1) < parseFloat(v2);
+            case BinOpType.Gte: return parseFloat(v1) >= parseFloat(v2);
+            case BinOpType.Gt: return parseFloat(v1) > parseFloat(v2);
+            case BinOpType.Eq: return parseFloat(v1) == parseFloat(v2);
 		}
 	}
 

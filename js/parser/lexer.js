@@ -121,16 +121,30 @@ class Lexer {
         break;
 
       case '<':
-        if (this._nextChar() == '=')
+        if (this._nextChar() == '=') {
           this._token = new Token(Token.LTE, null, 10);
-        else {
+        } else {
           this._index--;
-          this.fail();
+          this._token = new Token(Token.LT, null, 10);
+        }
+        break;
+            
+      case '>':
+        if (this._nextChar() == '=') {
+          this._token = new Token(Token.GTE, null, 10);
+        } else {
+          this._index--;
+          this._token = new Token(Token.GT, null, 10);
         }
         break;
 
       case '=':
-        this._token = new Token(Token.DEFINE);
+        if (this._nextChar() == '=') {
+          this._token = new Token(Token.EQ, null, 10);
+        } else {
+          this._index--;
+          this._token = new Token(Token.DEFINE);
+        }
         break;
 
       default:

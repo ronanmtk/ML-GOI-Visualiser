@@ -51,6 +51,10 @@ class Token {
   'MULT',
   'DIV',
   'LTE',
+  'LT',
+  'GTE',
+  'GT',
+  'EQ',
   'CONS',
   
   'IF',

@@ -8,6 +8,10 @@ var BinOpType = {
 	Plus: 2,
 	Sub: 3,
 	Mult: 4,
-	Div: 7,
+	Div: 10,
 	Lte: 5,
+    Lt: 6,
+    Gt: 7,
+    Gte: 8,
+    Eq: 9
 }

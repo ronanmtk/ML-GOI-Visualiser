@@ -61,7 +61,9 @@ class Parser {
     return token.type == Token.AND || token.type == Token.OR 
         || token.type == Token.PLUS || token.type == Token.SUB  
         || token.type == Token.MULT || token.type == Token.DIV 
-        || token.type == Token.LTE
+        || token.type == Token.LTE || token.type == Token.LT
+        || token.type == Token.GTE || token.type == Token.GT
+        || token.type == Token.EQ
   }
 
   parseApplication(ctx, lhs, pred) {
@@ -95,6 +97,18 @@ class Parser {
       }
       else if (op.type == Token.LTE) {
         lhs = new BinaryOp(BinOpType.Lte, "<=", lhs, rhs);
+      }
+      else if (op.type == Token.LT) {
+        lhs = new BinaryOp(BinOpType.Lt, "<", lhs, rhs);
+      }
+      else if (op.type == Token.GTE) {
+        lhs = new BinaryOp(BinOpType.Gte, ">=", lhs, rhs);
+      }
+      else if (op.type == Token.GT) {
+        lhs = new BinaryOp(BinOpType.Gt, ">", lhs, rhs);
+      }
+      else if (op.type == Token.EQ) {
+        lhs = new BinaryOp(BinOpType.Eq, "==", lhs, rhs);
       }
     }
     return lhs;

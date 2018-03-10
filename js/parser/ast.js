@@ -31,9 +31,18 @@ class Identifier {
 }
 
 class Constant {
-  constructor(value) {
+  constructor(value, isNumerical) {
     this.value = value;
+    this.isNumerical = isNumerical;
   }
+    
+  getType(context) {
+    if(isNumerical) {
+      return new NumericalType();
+    } else {
+      return new BooleanType();
+    }
+  } 
 }
 
 class Operation {
