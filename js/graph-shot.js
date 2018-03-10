@@ -1,9 +1,8 @@
 class GraphShot extends SubGraph {
     constructor(graph, width, height) {
         super();
-        this.graph = graph; //do not use after dot creation - wipe it??
         this.key = "root";
-        this.displayNodes = [];
+        this.displayNodes = new Map();
         this.forcedNodes = [];
         this.displayLinks = [];
         this.build(graph, width, height);
@@ -24,42 +23,28 @@ class GraphShot extends SubGraph {
         this.dot += graph.child.draw('\n  ', this, this);
         
         for(let node of this.forcedNodes) {
-            this.dot += this.graph.findNodeByKey(node).makeDot('\n  ');
+            this.dot += graph.findNodeByKey(node).makeDot('\n  ');
         }
         
         //displaying top level links and matching children's links
         for(let node of this.internalNodes) {
-            for(let link of this.graph.findNodeByKey(node).findLinksOutOf()) {
+            for(let link of graph.findNodeByKey(node).findLinksOutOf()) {
                 this.addLink(link);   
             }
         }
     }
     
     addDisplayLink(link) {
-        var fromExists = this.containsNode(link.from, this.displayNodes);
-        var toExists = this.containsNode(link.to, this.displayNodes);
-        
-        //can't edit original links as that changes internal representation of graph
-        var newLink = link;
-        var changed = false;
-        if(!fromExists) {
-            var group = this.getDisplayedGroup(this.graph.findNodeByKey(newLink.from));
-            if(group != "root") {
-                newLink = new Link(group, newLink.to, newLink.fromPort, newLink.toPort, newLink.reverse, true);
-                changed = true;
-            }
+        var display = true;
+        var newLink = link.duplicate(this.getDisplayedGroup(link.from), this.getDisplayedGroup(link.to));
+        if((newLink.to == newLink.from) && (newLink.to != link.to)) {
+            if(newLink.to != link.to) { //if the links are equal and links have been changed (loop onto self for group)
+                display = false;
+            }        
         }
-        if(!toExists) {
-            var group = this.getDisplayedGroup(this.graph.findNodeByKey(newLink.to));
-            if(group != "root") {
-                newLink = new Link(newLink.from, group, newLink.fromPort, newLink.toPort, newLink.reverse, true);
-                changed = true;
-            }
-        }
-        //same as (!changed || (changed && !=) )
-        //don't display self-looping links onto groups, but do if they exist on standard nodes
-        if(!(changed && (newLink.to == newLink.from)))
+        if(display) {
             this.displayLinks.push(newLink);
+        }
         
     }
     
@@ -67,34 +52,32 @@ class GraphShot extends SubGraph {
         this.forcedNodes.push(key);
     }
     
-    addDisplayNode(key) {
-        this.displayNodes.push(key);
+    addDisplayNode(key, displaykey) {
+        this.displayNodes.set(key, displaykey);
     }
     
     getDisplayedGroup(node) {
         var found = false;
         var target = node;
         while(!found) {
-            if(target.key == "root") {
+            var group = this.displayNodes.get(target)
+            if(target == group) {
                 found = true;
             } else {
-                found = this.containsNode(target.key, this.displayNodes);
-                if(!found) {
-                    target = target.displayGroup;
-                }
+                target = group;
             }
         }
-        return target.key;
+        return target;
     }
     
     display(hide) {
-        this.displayNodes = [];
+        this.displayNodes = new Map();
         //create dot for nodes hierarchically
         var finalDot = this.completeDotTemplates(hide);
         finalDot += "\n";
         //display everything at the top level
         for(let node of this.internalNodes) {
-            this.addDisplayNode(node);
+            this.addDisplayNode(node, node);
         }
         for (let link of this.openLinks) {
             this.addDisplayLink(link);

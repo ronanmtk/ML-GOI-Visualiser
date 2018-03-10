@@ -5,25 +5,24 @@ class ClosableGroup extends SubGraph {
         this.label = "";
         this.key = key;
         this.root = root;
-        this.group = group;
-        this.displayGroup = group.displayGroup;
         this.open = group.open;
         this.closed = "";
         this.upLinks = []; //links to a higher level
-        this.build();
+        this.build(group);
     }
     
-    build() {
+    build(group) {
         this.closed = this.level + this.key + '[shape=box,style=filled,color=lightgray,label=""];';
         this.dot = this.level + 'subgraph cluster_' + this.key + ' {' 
                  + this.level + '  graph[style=dotted];';
-        for(let node of Array.from(this.group.nodes)) {
+        for(let node of Array.from(group.nodes)) {
             this.dot += node.draw(this.level+'  ', this.root, this);
         }
         this.dot += this.level + '};';
         
+        var graph = group.graph;
         for(let node of this.internalNodes) {
-            for(let link of this.root.graph.findNodeByKey(node).findLinksOutOf()) {
+            for(let link of graph.findNodeByKey(node).findLinksOutOf()) {
                 if(this.sameLevel(node, link.to) || this.atHigherLevelThan(link.to)) {
                     this.addLink(link);
                 } else {
@@ -34,17 +33,20 @@ class ClosableGroup extends SubGraph {
     }
     
     addUpLink(link) {
-        this.upLinks.push(link);
+        this.upLinks.push(link.duplicate());
     }
     
     displayNodes(hide) {
         if(this.internalNodes.length != 0) {
             if(!this.open && hide) {
-                this.root.addDisplayNode(this.key);
+                for(let node of this.getAllInternalNodes()) {
+                    this.root.addDisplayNode(node, this.key);    
+                }
+                this.root.addDisplayNode(this.key, this.key);
                 return this.closed;
             } else {
                 for(let node of this.internalNodes) {
-                    this.root.addDisplayNode(node);
+                    this.root.addDisplayNode(node, node);
                 }
                 return this.completeDotTemplates(hide);
             }    

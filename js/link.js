@@ -116,4 +116,11 @@ class Link {
 		str += '];';
 		return str;
 	}
+    
+    duplicate(newFrom, newTo) {
+        return new Link(newFrom ? newFrom : this.from,
+                        newTo ? newTo : this.to,
+                        this.fromPort, this.toPort,
+                        this.reverse, true);
+    }
 }

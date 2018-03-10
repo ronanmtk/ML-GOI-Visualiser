@@ -13,7 +13,7 @@ class SubGraph {
     }
     
     addLink(link) {
-        this.openLinks.push(link);
+        this.openLinks.push(link.duplicate());
     }
     
     containsNode(key, nodeCollection) {
@@ -24,6 +24,17 @@ class SubGraph {
                 return true;
         }
         return false;
+    }
+    
+    getAllInternalNodes(allNodes) {
+        if(!allNodes) allNodes = [];
+        for(let node of this.internalNodes) {
+            allNodes.push(node);
+        }
+        for(let key of this.children.keys()) {
+            this.children.get(key).getAllInternalNodes(allNodes);
+        }
+        return allNodes;
     }
     
     atHigherLevelThan(node) {

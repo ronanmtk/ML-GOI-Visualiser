@@ -7,21 +7,20 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
         this.root = root;
         this.key = key;
         this.upLinks = [];
-        this.group = group;
-        this.displayGroup = group.displayGroup;
-        this.build();
+        this.build(group);
     }
     
-    build() {
-        for(let node of Array.from(this.group.nodes)) { //gives actual nodes (not groups) within the pair
+    build(group) {
+        //gives actual nodes (not groups) within the pair
+        for(let node of Array.from(group.nodes)) {
             node.addToSubgraph(this);   //never "drawn" so just have to add to group object
         }
         
+        var graph = group.graph;
         for(let nodeKey of this.internalNodes) {
-            var node = this.root.graph.findNodeByKey(nodeKey);
+            var node = graph.findNodeByKey(nodeKey);
             for(let link of node.findLinksOutOf()) {
                 if(!this.sameLevel(nodeKey, link.to) && !this.atHigherLevelThan(link.to)) {
-                    this.addUpLink(link);
                     if(node instanceof Pax || node instanceof Contract) {
                         if(node.name == "pair1" || node.name == "listHead") {
                             link.changeFrom(link.from, "w");
@@ -29,19 +28,20 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
                             link.changeFrom(link.from, "e");
                         }
                     }
+                    this.addUpLink(link);
                 }
             }
         }
-        this.dot = this.level + this.key + '[shape=' + this.shape + (this.hasFocus() ? ',style=filled,color=green3,fontcolor=white' : '') + ',label="' + this.label + '"];';
+        this.dot = this.level + this.key + '[shape=' + this.shape + (this.hasFocus(graph) ? ',style=filled,color=green3,fontcolor=white' : '') + ',label="' + this.label + '"];';
     }
     
     addUpLink(link) {
-        this.upLinks.push(link);
+        this.upLinks.push(link.duplicate());
     }
     
-    hasFocus() {
+    hasFocus(graph) {
         for(let node of this.internalNodes) {
-            if(this.root.graph.findNodeByKey(node).focus) {
+            if(graph.findNodeByKey(node).focus) {
                 return true;
             }
         }
@@ -50,7 +50,10 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
     
     displayNodes(hide) {
         if(this.internalNodes.length != 0) {
-            this.root.addDisplayNode(this.key);
+            for(let node of this.internalNodes) {
+                this.root.addDisplayNode(node, this.key);    
+            }
+            this.root.addDisplayNode(this.key, this.key);
             return this.dot;   
         } else {
             return "";

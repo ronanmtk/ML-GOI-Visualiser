@@ -111,7 +111,6 @@ class DisplayedGroup extends Group {
         if(!this.blocking) {
             return super.draw(level, snapshot, subgraph);
         } else {
-            this.displayGroup = subgraph;
             var grp = this.getDrawingGroup(level,snapshot,subgraph);
             subgraph.children.set(this.key, grp);
             return "%%%"+this.key;

@@ -24,10 +24,6 @@ class Start extends Node {
 
 	draw(level, snapshot, subgraph) {
         subgraph.addInternalNode(this.key);
-        this.displayGroup = subgraph;
-        for(let link of this.findLinksOutOf()) {
-            link.displayGroup = subgraph;
-        }
         var str = '';
         str += (level + this.key + '[shape=' + this.shape);
         if(this.focus) {

@@ -11,7 +11,6 @@ class Node {
         this.focus = false;
 		this.graph = null;
 		this.group = null;
-        this.displayGroup = null;
         this.transitionFlag = TransitionFlag.NONE;
         this.forceDraw = false;
 		this.width = null;
@@ -114,11 +113,9 @@ class Node {
             if(this.forceDraw) {
                 subgraph.root.addForcedNode(this.key);
                 subgraph.root.addInternalNode(this.key);
-                this.displayGroup = subgraph.root;
                 return false;
             }
-            subgraph.addInternalNode(this.key);    
-            this.displayGroup = subgraph;
+            subgraph.addInternalNode(this.key);
             return true;
         }
         return false;
