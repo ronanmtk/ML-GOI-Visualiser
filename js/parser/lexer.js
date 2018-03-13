@@ -1,7 +1,11 @@
 class Lexer {
-  constructor(input) {
+  constructor(input, output) {
     this._input = input;
+    this._output = output;
+    output.val("");
     this._index = 0;
+    this._lineItem = 1;
+    this._line = 1;
     this._token = undefined;
     this._nextToken();
   }
@@ -13,7 +17,7 @@ class Lexer {
     if (this._index >= this._input.length) {
       return '\0';
     }
-
+    
     return this._input[this._index++];
   }
 
@@ -27,6 +31,10 @@ class Lexer {
     let c;
     do {
       c = this._nextChar();
+      if(c == '\n') {
+        this._line++;
+        this._lineItem = 1;
+      }
     } while (/\s/.test(c));
 
     switch (c) {
@@ -155,7 +163,7 @@ class Lexer {
             str += c;
             c = this._nextChar();
 
-          } while (/[a-zA-Z]|'|_/.test(c));
+          } while (/[a-zA-Z0-9]|'|_/.test(c));
 
           // put back the last char which is not part of the identifier
           this._index--;
@@ -244,7 +252,9 @@ class Lexer {
    * location
    */
   fail() {
-    throw new Error(`Unexpected token at offset ${this._index}`);
+    var errMsg = `Unexpected token at line ${this._line}, item ${this._lineItem}`;
+    this._output.val(errMsg);
+    throw new Error(errMsg);
   }
 
   /**
@@ -259,10 +269,11 @@ class Lexer {
    */
   match(type) {
     if (this.next(type)) {
+      this._lineItem++;
       this._nextToken();
       return;
     }
-    console.error(`${this._index}: Invalid token: Expected '${type}' found '${this._token.type}'`);
+    this._output.val(`Invalid token at line ${this._line}, item ${this._lineItem}: Expected '${type}' found '${this._token.type}'`);
     throw new Error('Parse Error');
   }
 
@@ -271,6 +282,7 @@ class Lexer {
    */
   skip(type) {
     if (this.next(type)) {
+      this._lineItem++;
       this._nextToken();
       return true;
     }

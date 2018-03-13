@@ -7,24 +7,33 @@ class GoIMachine {
 		this.graph = new Graph();
 		graph = this.graph; // cheating!
 		this.token = new MachineToken();
+        this.output = null;
 		this.gc = new GC(this.graph);
 		this.count = 0;
+        this.errMsg = "Invalid input, unable to build graph";
 	}
 
-	compile(source) {
-		const lexer = new Lexer(source + '\0');
+	compile(source, output) {
+		const lexer = new Lexer(source + '\0', output);
 		const parser = new Parser(lexer);
 		const ast = parser.parse();
 		// init
 		this.graph.clear();
 		this.token.reset();
 		this.count = 0;
+        this.output = output;
 		// create graph
 		var start = new Start().addToGroup(this.graph.child);
 		var term = this.toGraph(ast, this.graph.child, DisplayFlag.NONE, RedrawFlag.NONE);
 		new Link(start.key, term.prin.key, "n", "s").addToGroup(this.graph.child);
 		this.deleteVarNode(this.graph.child);
 	}
+    
+    fail(msg) {
+        var errMsg = msg ? msg : this.errMsg;
+        this.output.val(errMsg);
+        throw new Error(errMsg);
+    }
 
 	// translation
 	toGraph(ast, group, displayFlag, redrawFlag) {
@@ -41,8 +50,12 @@ class GoIMachine {
             abs.transitionFlag = ast.transitionFlag ? ast.transitionFlag : TransitionFlag.NONE;
 			var term = this.toGraph(ast.body, wrapper.box, displayFlag, redrawFlag);
 			new Link(wrapper.prin.key, abs.key, "n", "s").addToGroup(wrapper);
-
-			new Link(abs.key, term.prin.key, "e", "s").addToGroup(abs.group);
+            
+            if(term) {
+                new Link(abs.key, term.prin.key, "e", "s").addToGroup(abs.group);
+            } else {
+                this.fail();
+            }
 
 			var auxs = Array.from(term.auxs);
 			var paramUsed = false;
@@ -93,13 +106,21 @@ class GoIMachine {
 			var app = new App(redrawFlag).addToGroup(group);
 			//lhs
 			var left = this.toGraph(ast.lhs, lGroup, lDisplayFlag, lRedrawFlag);
-			var der = new Der(left.prin.name, redrawFlag).addToGroup(group);
+            if(left) {
+                var der = new Der(left.prin.name, redrawFlag).addToGroup(group); 
+            } else {
+                this.fail();
+            }
 			new Link(der.key, left.prin.key, "n", "s").addToGroup(group);
 			// rhs
 			var right = this.toGraph(ast.rhs, group, DisplayFlag.NONE, redrawFlag);		
 			
 			new Link(app.key, der.key, "w", "s").addToGroup(group);
-			new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
+			if(right) {
+                new Link(app.key, right.prin.key, "e", "s").addToGroup(group);
+            } else {
+                this.fail();
+            }
 			return new Term(app, Term.joinAuxs(left.auxs, right.auxs, group, redrawFlag));
 		} 
 
@@ -117,8 +138,12 @@ class GoIMachine {
 			var left = this.toGraph(ast.v1, group, displayFlag, redrawFlag);
 			var right = this.toGraph(ast.v2, group, displayFlag, redrawFlag);
 
-			new Link(binop.key, left.prin.key, "w", "s").addToGroup(group);
-			new Link(binop.key, right.prin.key, "e", "s").addToGroup(group);
+            if(left && right) {
+                new Link(binop.key, left.prin.key, "w", "s").addToGroup(group);
+			    new Link(binop.key, right.prin.key, "e", "s").addToGroup(group);
+            } else {
+                this.fail();
+            }
 
 			return new Term(binop, Term.joinAuxs(left.auxs, right.auxs, group, redrawFlag));
 		}
@@ -128,7 +153,11 @@ class GoIMachine {
 			unop.subType = ast.type;
 			var box = this.toGraph(ast.v1, group, displayFlag, redrawFlag);
 
-			new Link(unop.key, box.prin.key, "n", "s").addToGroup(group);
+            if(box) {
+                new Link(unop.key, box.prin.key, "n", "s").addToGroup(group);   
+            } else {
+                this.fail();
+            }
 
 			return new Term(unop, box.auxs);
 		}
@@ -139,9 +168,13 @@ class GoIMachine {
 			var t1 = this.toGraph(ast.t1, group, displayFlag, redrawFlag);
 			var t2 = this.toGraph(ast.t2, group, displayFlag, redrawFlag);
 
-			new Link(ifnode.key, cond.prin.key, "w", "s").addToGroup(group);
-			new Link(ifnode.key, t1.prin.key, "n", "s").addToGroup(group);
-			new Link(ifnode.key, t2.prin.key, "e", "s").addToGroup(group);
+            if(cond && t1 && t2) {
+                new Link(ifnode.key, cond.prin.key, "w", "s").addToGroup(group);
+                new Link(ifnode.key, t1.prin.key, "n", "s").addToGroup(group);
+                new Link(ifnode.key, t2.prin.key, "e", "s").addToGroup(group);
+            } else {
+                this.fail();
+            }
 
 			return new Term(ifnode, Term.joinAuxs(Term.joinAuxs(t1.auxs, t2.auxs, group, redrawFlag), cond.auxs, group, redrawFlag));
 		}
@@ -198,7 +231,11 @@ class GoIMachine {
             
             var app = new App(redrawFlag).addToGroup(group);
             new Link(app.key,der.key,"w","s").addToGroup(group);
-            new Link(app.key,pair.prin.key,"e","s").addToGroup(group);
+            if(pair) {
+                new Link(app.key,pair.prin.key,"e","s").addToGroup(group); 
+            } else {
+                this.fail();
+            }
             
             return new Term(app, Term.joinAuxs(pairOp.auxs, pair.auxs, group, redrawFlag));
         }
@@ -225,7 +262,11 @@ class GoIMachine {
                 
                 var app = new App(redrawFlag).addToGroup(group);
                 new Link(app.key, der.key, "w", "s").addToGroup(group);
-                new Link(app.key, list.prin.key, "e", "s").addToGroup(group);
+                if(list) {
+                    new Link(app.key, list.prin.key, "e", "s").addToGroup(group);   
+                } else {
+                    this.fail();
+                }
                 
                 return new Term(app, Term.joinAuxs(listOp.auxs, list.auxs, group, redrawFlag));
             }
@@ -259,7 +300,11 @@ class GoIMachine {
 			var box = this.toGraph(new Abstraction(p2, ast.body), wrapper.box, displayFlag, redrawFlag);
             wrapper.auxs = wrapper.createPaxsOnTopOf(box.auxs);
 
-			new Link(recur.key, box.prin.key, "e", "s").addToGroup(wrapper);
+            if(box) {
+                new Link(recur.key, box.prin.key, "e", "s").addToGroup(wrapper);
+            } else {
+                this.fail();
+            }
 
 			var p1Used = false;
 			var auxNode1;

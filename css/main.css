@@ -42,20 +42,8 @@
 }
 
 #ta-program {
-    height:100%;
-    width:100%;
-    padding: 1%;
-    resize:none;
-    overflow-y: scroll;
-    font-size:0.9rem;
-    border-radius: 5px;
-    color: black; 
-    border-color: grey;
     background-color: white;
-    font-family: "ubuntu mono", monospace;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    overflow-y: scroll;
 }
 
 body {
@@ -164,17 +152,11 @@ html {
     width: 40%;
 }
 
-
-
-
-
 .control-buttons {
     width: 16%;
     margin-right: 5px;
     font-size: 1rem;
 }
-
-
 
 #btn-play {
     background-color: green;
@@ -189,16 +171,9 @@ html {
     background-color: darkgreen;
 }
 
-
-
-
 #graph-options {
     width:100%;
     height:5%;
-}
-
-html {
-    
 }
 
 #graph-wrapper {
@@ -207,11 +182,10 @@ html {
     margin-bottom: 5px;
 }
 
-
-
 .text-wrapper {
-    height: 94%;
+    height: 79%;
     width: 100%;
+    margin-bottom: 5px;
 }
 
 .top-wrapper {
@@ -259,14 +233,46 @@ html {
 
 #graph {
     width: 100%;
-    height: 93%;
+    height: 85%;
     margin-bottom: 2%;
 }
 
-
-
-
-
 .not-shown {
     visibility: hidden;
+}
+
+.console-wrapper {
+    height: 12%;
+    width: 100%;
+}
+
+#ta-console-output {
+    background-color: lightgray;
+    color: red;
+    overflow-y: none;
+}
+
+.text-area {
+    height:100%;
+    width:100%;
+    padding: 1%;
+    resize:none;
+    font-size:0.9rem;
+    border-radius: 5px;
+    color: black; 
+    border-color: grey;
+    font-family: "ubuntu mono", monospace;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#playback-speed {
+    width:100%;
+    height:5%;
+    margin-bottom: 2%;
+}
+
+.speed-buttons {
+    width: 3%;
 }

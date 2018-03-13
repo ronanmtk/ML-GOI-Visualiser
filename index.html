@@ -29,7 +29,7 @@
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
                 });
-
+                $("#sm-example").val("sum1");
                 $("#ta-program").val(sum_list);
             });
         </script>
@@ -50,7 +50,10 @@
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">
-                    <textarea id="ta-program" spellcheck="false"></textarea>
+                    <textarea id="ta-program" class="text-area" spellcheck="false"></textarea>
+                </div>
+                <div class="console-wrapper" align="center">
+                    <textarea id="ta-console-output" class="text-area" spellcheck="false" readonly="readonly"></textarea>
                 </div>
             </div>
             <div class="bottom-wrapper">
@@ -69,7 +72,12 @@
                             <input type="radio" name="graph-display" value="show-all"> Show all
                         </form>
                     </div>
-
+                    <div id="playback-speed">
+                        <span>Playback Speed: </span>
+                        <button class="all-buttons speed-buttons" id="btn-speed-down">-</button>
+                        <span id="speed-value">5</span>
+                        <button class="all-buttons speed-buttons" id="btn-speed-up">+</button>
+                    </div>
                 </div>
             </div>
             <div class="bottom-wrapper" align="center">

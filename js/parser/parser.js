@@ -14,7 +14,7 @@ class Parser {
   // term ::= LAMBDA LCID DOT term
   //        | LET LCID DEFINE term IN term 
   //        | IF cond THEN term ELSE term
-  //        | REC LPAREN LCID COMMA LCID RPAREN DOT term
+  //        | REC LCID LCID DOT term
   //        | application
   term(ctx) {
     if (this.lexer.skip(Token.LAMBDA)) {
@@ -43,11 +43,8 @@ class Parser {
       return new IfThenElse(cond, t1, t2);
     }
     else if (this.lexer.skip(Token.REC)) {
-      //this.lexer.match(Token.LPAREN);
       const id = this.lexer.token(Token.LCID);
-      //this.lexer.match(Token.COMMA);
       const id2 = this.lexer.token(Token.LCID);
-      //this.lexer.match(Token.RPAREN);
       this.lexer.match(Token.DOT);
       const term = this.term([id2].concat([id].concat(ctx)));
       return new Recursion(id, id2, term);

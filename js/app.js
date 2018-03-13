@@ -6,6 +6,10 @@ Array.prototype.last = function() {
 
 var play = false;
 var playing = false;
+const playSpeedBound = 1500;
+const maxPlaySpeed = 10;
+var playSpeed = 5;
+const playSpeedMult = 100;
 var finished = false;
 var current = -1;
 var latest = -1;
@@ -61,7 +65,9 @@ require(["jquery", "renderer", "goi-machine"],
 				$("#flag").val("");
 				$("#boxStack").val("");
 				var source = $("#ta-program").val();
-				machine.compile(source);
+                var output = $("#ta-console-output");
+                output.val("");
+				machine.compile(source, output);
                 current = -1;
                 latest = -1;
 				draw(true, true);
@@ -106,7 +112,7 @@ require(["jquery", "renderer", "goi-machine"],
 			playing = true;
 			next();
 			if (play)
-				setTimeout(autoPlay, 800);
+				setTimeout(autoPlay, playSpeedBound - (playSpeed*playSpeedMult));
 			else
 				playing = false;
 		}
@@ -126,6 +132,20 @@ require(["jquery", "renderer", "goi-machine"],
             }
             draw(true, true);
 		}
+    
+        $("#btn-speed-down").click(function() {
+            if(playSpeed > 1) {
+                playSpeed--;
+                document.getElementById("speed-value").innerHTML = playSpeed;
+            }
+        });
+    
+        $("#btn-speed-up").click(function() {
+            if(playSpeed < maxPlaySpeed) {
+                playSpeed++;
+                document.getElementById("speed-value").innerHTML = playSpeed;
+            }
+        });
 
 		$("#btn-pause").click(function(event) {
 			pause();

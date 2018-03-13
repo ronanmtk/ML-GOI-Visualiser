@@ -11,53 +11,51 @@ class Token {
   }
 };
 
-[
-  'EOF', // we augment the tokens with EOF, to indicate the end of the input.
-  'LAMBDA',
-  'LPAREN',
-  'RPAREN',
-  'LSPAREN',
-  'RSPAREN',
-  'LCID',
-  'DOT', 
-  'COMMA',
-  'SEMICOLON',
+Token['EOF'] = 'EOF';
+Token['LAMBDA'] = 'fun';
+Token['LPAREN'] = '(';
+Token['RPAREN'] = ')';
+Token['LSPAREN'] = '[';
+Token['RSPAREN'] = ']';
+Token['LCID'] = '<identifier>';
+Token['DOT'] = '->'; 
+Token['COMMA'] = ',';
+Token['SEMICOLON'] = ';';
   
-  'APP',
+Token['APP'] = '<application>';
 
-  'LET',
-  'DEFINE',
-  'IN',
+Token['LET'] = 'let';
+Token['DEFINE'] = '=';
+Token['IN'] = 'in';
 
-  'REC',
+Token['REC'] = 'rec';
 
-  'INT',
-  'PAIR',
+Token['INT'] = '<int>';
+Token['PAIR'] = 'pair';
 
-  'TRUE',
-  'FALSE',
+Token['TRUE'] = 'true';
+Token['FALSE'] = 'false';
 
-  'NOT',
-  'FST',
-  'SND',
-  'HEAD',
-  'TAIL',
-  'ISNIL',
+Token['NOT'] = '!';
+Token['FST'] = 'fst';
+Token['SND'] = 'snd';
+Token['HEAD'] = 'head';
+Token['TAIL'] = 'tail';
+Token['ISNIL'] = 'isnil';
 
-  'AND',
-  'OR',
-  'PLUS',
-  'SUB',
-  'MULT',
-  'DIV',
-  'LTE',
-  'LT',
-  'GTE',
-  'GT',
-  'EQ',
-  'CONS',
+Token['AND'] = '&&';
+Token['OR'] = '||';
+Token['PLUS'] = '+';
+Token['SUB'] = '-';
+Token['MULT'] = '*';
+Token['DIV'] = '/';
+Token['LTE'] = '<=';
+Token['LT'] = '<';
+Token['GTE'] = '>=';
+Token['GT'] = '>';
+Token['EQ'] = '==';
+Token['CONS'] = '::';
   
-  'IF',
-  'THEN',
-  'ELSE',
-].forEach(token => Token[token] = token);
+Token['IF'] = 'if';
+Token['THEN'] = 'then';
+Token['ELSE'] = 'else';
