@@ -70,8 +70,8 @@ require(["jquery", "renderer", "goi-machine"],
 				machine.compile(source, output);
                 current = -1;
                 latest = -1;
+                finished = false;
 				draw(true, true);
-				finished = false;
 			});
 		});
 

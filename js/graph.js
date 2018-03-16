@@ -45,10 +45,28 @@ class Graph {
 		this.allLinks.splice(this.allLinks.indexOf(link), 1);
 	}
     
+    //never call from internal graph, only on a duplicated display graph
     transform() {
         for(let node of this.allNodes.values()) {
             node.transform();
         }
+    }
+    
+    createDisplayGraph() {
+        var dg = new Graph();
+        var nodeMap = new Map();
+        dg.child = this.child.duplicate(nodeMap, dg);
+        for(let link of this.allLinks) {
+            var frm = nodeMap.get(link.from);
+            var to = nodeMap.get(link.to);
+            if(frm && to) {
+                var newLink = new Link(frm.key, to.key, link.fromPort, link.toPort, link.reverse, true);
+                newLink.addToGraph(dg);
+                newLink.addToNode();
+            }
+        }
+        dg.transform();
+        return dg;
     }
     
     drawMid(current, hide) {
@@ -56,20 +74,7 @@ class Graph {
     }
 
 	drawNext(width, height, hide) {
-        var displayGraph = new Graph();
-        var nodeMap = new Map();
-        var groups = [];
-        displayGraph.child = this.child.duplicate(nodeMap, displayGraph);
-        for(let link of this.allLinks) {
-            var frm = nodeMap.get(link.from);
-            var to = nodeMap.get(link.to);
-            if(frm && to) {
-                var newLink = new Link(frm.key, to.key, link.fromPort, link.toPort, link.reverse, true);
-                newLink.addToGraph(displayGraph);
-                newLink.addToNode();
-            }
-        }
-        displayGraph.transform();
+        var displayGraph = this.createDisplayGraph();
 
         var snapshot = new GraphShot(displayGraph, width, height);
         this.graphStack.push(snapshot);

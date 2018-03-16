@@ -222,7 +222,7 @@ class Parser {
     } 
     else if (this.lexer.skip(Token.NOT)) {
       const term = this.term(ctx);
-      return new UnaryOp(UnOpType.Not, "~", term);
+      return new UnaryOp(UnOpType.Not, "not", term);
     }
     else {
       return undefined;
