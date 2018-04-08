@@ -15,17 +15,14 @@ var sum_list_2 = "let sum = rec f xs -> \n"+
                  "    ) \n"+
                  "in sum [5;9;12]";
 
-var map_example = "let map = rec map' f -> fun xs -> \n"+
-                  "  if (isnil xs) \n"+
-                  "  then [] \n"+
-                  "  else ( let x = (head xs) in \n"+
-                  "         let xs' = (tail xs) in \n"+
-                  "         ( (f x) :: (map' f xs') ) \n"+
-                  "        ) \n"+
-                  "in map (fun x -> x + 1) [4;2;9] \n";
+var fun_f = "let f = fun x -> \n"+
+            "let dbl = fun y -> y + y in \n"+
+            "let sqr = fun z -> z * z in \n"+
+            "( (sqr (dbl x)) + (dbl (sqr x)) ) in \n"+
+            "f 3";
 
 var mod = "let mod = rec f x -> fun n -> \n"+
-          "  if (x <= n) \n"+
+          "  if (x < n) \n"+
           "  then x \n"+
           "  else (f (x-n) n) \n"+
           "in mod 12 5";
@@ -33,7 +30,7 @@ var mod = "let mod = rec f x -> fun n -> \n"+
 var append = "let app = rec app' xs -> fun ys -> \n"+
              "  if (isnil xs) \n"+
              "  then ys \n"+
-             "  else (app' (tail xs) ((head xs) :: ys)) \n"+
+             "  else (head xs :: (app' (tail xs) ys)) \n"+
              "in app [1;2;3] [4;5;6]";
 
 var tris_naive = "let tri = rec f y -> \n"+
@@ -55,7 +52,7 @@ var tris = "let t = rec f x -> fun m -> fun n -> \n"+
            "        a :: (f (x + 1) a n)) \n"+
            "  else [] \n"+
            "in \n\n"+
-           "let tris = fun n -> t 0 1 n \n\n"+ 
+           "let tris = fun n -> t 1 0 n \n\n"+ 
            "in tris 3";
     
 var run_length_encoding = "let rle' = rec f n -> fun acc -> fun ys -> \n"+
@@ -70,7 +67,7 @@ var run_length_encoding = "let rle' = rec f n -> fun acc -> fun ys -> \n"+
                           "                let z = head ys' in \n"+
                           "                  if (y == z) \n"+
                           "                  then (f (n+1) acc ys') \n"+
-                          "                  else (f n (pair((n+1),y) :: acc) ys') \n"+
+                          "                  else (f 0 (pair((n+1),y) :: acc) ys') \n"+
                           "              ) \n"+
                           "       ) \n"+
                           "in \n\n"+
@@ -82,3 +79,12 @@ var run_length_encoding = "let rle' = rec f n -> fun acc -> fun ys -> \n"+
                           "let rle = fun xs -> rev (rle' 0 [] xs) [] \n"+
                           "in \n\n"+
                           "rle [4;4;2]";
+
+var map_example = "let map = rec map' f -> fun xs -> \n"+
+                  "  if (isnil xs) \n"+
+                  "  then [] \n"+
+                  "  else ( let x = (head xs) in \n"+
+                  "         let xs' = (tail xs) in \n"+
+                  "         ( (f x) :: (map' f xs') ) \n"+
+                  "        ) \n"+
+                  "in map (fun x -> x + 1) [4;2;9] \n";

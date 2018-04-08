@@ -19,12 +19,13 @@
                     switch($("#sm-example option:selected").val()) {
                         case "sum1": prog = sum_list; break;
                         case "sum2": prog = sum_list_2; break;
-                        case "map": prog = map_example; break;
+                        case "f": prog = fun_f; break;
                         case "mod": prog = mod; break;
                         case "append": prog = append; break;
                         case "tris-naive": prog = tris_naive; break;
                         case "tris": prog = tris; break;
                         case "rle": prog = run_length_encoding; break;
+                        case "map": prog = map_example; break;
                     }
                     $("#ta-program").val(prog);
                     $("#btn-make-graph").click();
@@ -39,14 +40,15 @@
             <div class="top-wrapper" align="center">
                 <div id="select-code">
                     <select id="sm-example">
-                        <option value="sum1" selected>1a: Summing List</option>
-                        <option value="sum2">1b: Summing List</option>
-                        <option value="map">1c: Map Definition</option>
-                        <option value="mod">2: Mod</option>
-                        <option value="append">3: Append</option>
-                        <option value="tris-naive">4a: Triangular Numbers (Naive)</option>
-                        <option value="tris">4b: Triangular Numbers</option>
-                        <option value="rle">5: Run Length Encoding</option>
+                        <option value="sum1" selected>Summing List v1</option>
+                        <option value="sum2">Summing List v2</option>
+                        <option value="f">f 3 (complex call-and-return)</option>
+                        <option value="mod">Modulo</option>
+                        <option value="append">Append</option>
+                        <option value="tris-naive">Triangular Numbers (Naive)</option>
+                        <option value="tris">Triangular Numbers</option>
+                        <option value="rle">Run-length Encoding</option>
+                        <option value="map">Map</option>
                     </select>
                 </div>
                 <div class="text-wrapper" align="center">
