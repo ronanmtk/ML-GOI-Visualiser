@@ -1,6 +1,60 @@
 var graph = null;
 var dev = false;
 
+define('goi-machine', function(require) {
+
+var Abstraction = require('ast/abstraction');
+var Application = require('ast/application');
+var Identifier = require('ast/identifier');
+var Constant = require('ast/constant');
+var Operation = require('ast/operation');
+var UnaryOp = require('ast/unary-op');
+var BinaryOp = require('ast/binary-op');
+var IfThenElse = require('ast/if-then-else');
+var Pair = require('ast/pair');
+var PairOp = require('ast/pair-op');
+var Recursion = require('ast/recursion');
+var List = require('ast/list');
+var EmptyList = require('ast/empty-list');
+var Cons = require('ast/cons');
+var ListOp = require('ast/list-op');
+
+var Lexer = require('parser/lexer');
+var Parser = require('parser/parser');
+
+var MachineToken = require('token');
+var TransitionFlag = require('token').TransitionFlag();
+var RedrawFlag = require('token').RedrawFlag();
+var Link = require('link');		
+
+var Graph = require('graph');
+var Group = require('group');
+var PairBox = require('pair-box');
+var EmptyListBox = require('empty-list-box');
+var ConsBox = require('cons-box');
+var PairOpBox = require('pair-op-box');
+var ListOpBox = require('list-op-box');
+var Term = require('term');
+var BoxWrapper = require('box-wrapper');
+
+var Expo = require('nodes/expo');
+var Abs = require('nodes/abs');
+var App = require('nodes/app');
+var BinOp = require('nodes/binop');
+var Const = require('nodes/const');
+var Contract = require('nodes/contract');
+var Der = require('nodes/der');
+var Var = require('nodes/var');
+var If = require('nodes/if');
+var Pax = require('nodes/pax');
+var Promo = require('nodes/promo');
+var Recur = require('nodes/recur');
+var Start = require('nodes/start');
+var UnOp = require('nodes/unop');
+var Weak = require('nodes/weak');
+
+var GC = require('gc');
+    
 class GoIMachine {
 	
 	constructor() {
@@ -412,32 +466,6 @@ var DisplayFlag = {
     LISTOP: 22
 }
 
-var RedrawFlag = {
-    NONE: 0,
-    INPAIR: 1,
-    INOP: 2,
-    INLIST: 3,
-    INLISTOP: 4,
-    INLISTISNIL: 5
-}
+return GoIMachine;
 
-var TransitionFlag = {
-    NONE: 0,
-    OPEXIT: 1,
-    LISTENTER: 2,
-    LISTEXIT: 3,
-    ISNILEXIT: 4,
-    LISTOPENTER: 5,
-    LISTOPEXIT: 6
-}
-
-define('goi-machine', ['gc', 'graph', 'node', 'group', 'link', 'term', 'token', 'op'
-                    , 'subgraph', 'graph-shot', 'closable-group', 'abstracted-group' 
-                    , 'parser/ast', 'parser/token', 'parser/lexer', 'parser/parser'
-					, 'nodes/expo', 'nodes/abs', 'nodes/app', 'nodes/binop', 'nodes/const', 'nodes/contract'
-					, 'nodes/der', 'nodes/if', 'nodes/pax', 'nodes/promo'
-					, 'nodes/recur', 'nodes/start', 'nodes/unop', 'nodes/weak'],
-	function() {
-		return new GoIMachine();	
-	}
-);
+});

@@ -1,5 +1,9 @@
 var showKey = false;
 
+define(function(require) {
+    
+var TransitionFlag = require('token').TransitionFlag();
+    
 class Node {
 
 	constructor(redrawFlag, shape, text, name) {
@@ -158,4 +162,13 @@ class Node {
         token.redraw = false;
 		return nextLink;
 	}
+    
+    //quick fix at VERY end, no time to do in a better way
+    isAbs() {
+        return false;
+    }
 }
+    
+return Node;
+    
+});

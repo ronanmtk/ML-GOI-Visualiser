@@ -17,7 +17,9 @@ var latest = -1;
 var hide = true;
 
 require(["jquery", "renderer", "goi-machine"],
-	function ($, renderer, machine) {
+	function ($, renderer, Machine) {
+    
+        var machine = new Machine();
 
 		function clearGraph(callback) {
 			renderer.render('digraph G {\n\t\n}');
@@ -181,7 +183,7 @@ require(["jquery", "renderer", "goi-machine"],
 		$stacks.on('scroll', sync);
 
 		renderer.init("#graph");
-		//renderer.init({element: "#graph", zoom: {extent: [0.1, 10]}})
+		$("#ta-program").val(sum_list);
   		$("#btn-make-graph").click();
 	}
 );
@@ -194,11 +196,3 @@ function specialChar(textarea) {
 		textarea.setSelectionRange(selection-6, selection-6);
 	}
 }
-
-/*
-var info =
-      "Instructions:" +
-+ "\n  1. Choose an example from the drop down menu or create your own program"
-+ "\n  2. Click '>>' button to display the graph"
-+ "\n  3. Click ";
-*/

@@ -1,3 +1,9 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var RedrawFlag = require('token').RedrawFlag();
+
 class Start extends Node {
 
 	constructor() {
@@ -34,3 +40,7 @@ class Start extends Node {
 	}
 
 }
+   
+return Start;    
+    
+});

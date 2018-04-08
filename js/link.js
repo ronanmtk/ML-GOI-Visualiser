@@ -1,3 +1,5 @@
+define(function(require) {
+
 class Link {
 	constructor(from, to, fromPort, toPort, reverse, display) {
 		this.from = from;
@@ -124,3 +126,7 @@ class Link {
                         this.reverse, true);
     }
 }
+    
+return Link;
+    
+});

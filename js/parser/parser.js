@@ -1,3 +1,23 @@
+define(function(require) { 
+    
+var Token = require('parser/token');
+var Abstraction = require('ast/abstraction');
+var Application = require('ast/application');
+var Identifier = require('ast/identifier');
+var Constant = require('ast/constant');
+var UnaryOp = require('ast/unary-op');
+var BinaryOp = require('ast/binary-op');
+var IfThenElse = require('ast/if-then-else');
+var Pair = require('ast/pair');
+var PairOp = require('ast/pair-op');
+var Recursion = require('ast/recursion');
+var List = require('ast/list');
+var EmptyList = require('ast/empty-list');
+var Cons = require('ast/cons');
+var ListOp = require('ast/list-op');
+var BinOpType = require('op').BinOpType;
+var UnOpType = require('op').UnOpType;
+
 class Parser {
   constructor(lexer) {
     this.lexer = lexer;
@@ -169,7 +189,7 @@ class Parser {
     } 
     else if (this.lexer.next(Token.INT)) {
       const n = this.lexer.token(Token.INT);
-      return new Constant(n, true);
+      return new Constant(n);
     }
     else if (this.lexer.skip(Token.PAIR)) {
       this.lexer.match(Token.LPAREN);
@@ -215,10 +235,10 @@ class Parser {
       return new ListOp("tail", list);
     }
     else if (this.lexer.skip(Token.TRUE)) {
-      return new Constant(true, false);
+      return new Constant(true);
     } 
     else if (this.lexer.skip(Token.FALSE)) {
-      return new Constant(false, false);
+      return new Constant(false);
     } 
     else if (this.lexer.skip(Token.NOT)) {
       const term = this.term(ctx);
@@ -229,3 +249,7 @@ class Parser {
     }
   }
 }
+
+return Parser;
+    
+});

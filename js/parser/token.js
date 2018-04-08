@@ -1,3 +1,5 @@
+define(function(require) {
+
 class Token {
   /**
    * type should be one of the valid token types list below, and value is an
@@ -59,3 +61,6 @@ Token['CONS'] = '::';
 Token['IF'] = 'if';
 Token['THEN'] = 'then';
 Token['ELSE'] = 'else';
+    
+return Token;
+});

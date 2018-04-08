@@ -1,3 +1,7 @@
+define('group', function(require) {
+    
+var Node = require('node');
+    
 // general group in a graph (subgraph)
 class Group extends Node {
 	constructor(opened) {
@@ -69,6 +73,14 @@ class Group extends Node {
         return new Group(this.open);
     }
 }
+    
+return Group;
+
+});
+
+define('displayed-group', function(require) {
+	
+var Group = require('group');
 
 class DisplayedGroup extends Group {
     constructor(opened) {
@@ -117,6 +129,15 @@ class DisplayedGroup extends Group {
         }
     }
 }
+    
+return DisplayedGroup;
+    
+});
+
+define('box', function(require) {
+    
+var DisplayedGroup = require('displayed-group');
+var ClosableGroup = require('closable-group');
 
 // general box-ed subgraph
 class Box extends DisplayedGroup {
@@ -146,6 +167,16 @@ class Box extends DisplayedGroup {
         return new ClosableGroup(level, snapshot, this.key, this);
     }
 }
+    
+return Box;
+    
+});
+
+define('copyable-box', function(require) {
+    
+var DisplayedGroup = require('displayed-group');
+var BoxWrapper = require('box-wrapper');
+var Link = require('link');
 
 class CopyableBox extends DisplayedGroup {
     constructor() {
@@ -175,6 +206,15 @@ class CopyableBox extends DisplayedGroup {
         return boxCopy;
     }
 }
+    
+return CopyableBox;
+    
+});
+
+define('pair-box', function(require) {
+    
+var CopyableBox = require('copyable-box');
+var AbstractedGroup = require('abstracted-group');
 
 class PairBox extends CopyableBox {
     constructor() {
@@ -200,6 +240,15 @@ class PairBox extends CopyableBox {
     }
     
 }
+    
+return PairBox;
+    
+});
+
+define('empty-list-box', function(require) {
+    
+var CopyableBox = require('copyable-box');
+var AbstractedGroup = require('abstracted-group');
 
 class EmptyListBox extends CopyableBox {
     constructor() {
@@ -214,6 +263,15 @@ class EmptyListBox extends CopyableBox {
         return new AbstractedGroup(level, "[ ]", "circle", snapshot, this.key, this);
     }
 }
+    
+return EmptyListBox;
+    
+});
+
+define('cons-box', function(require) {
+    
+var CopyableBox = require('copyable-box');
+var AbstractedGroup = require('abstracted-group');
 
 class ConsBox extends CopyableBox {
     constructor() {
@@ -228,6 +286,15 @@ class ConsBox extends CopyableBox {
         return new AbstractedGroup(level, "::", "hexagon", snapshot, this.key, this);
     }
 }
+    
+return ConsBox;
+    
+});
+
+define('pair-op-box', function(require) {
+    
+var CopyableBox = require('copyable-box');
+var AbstractedGroup = require('abstracted-group');
 
 class PairOpBox extends CopyableBox {
     constructor(label) {
@@ -244,7 +311,17 @@ class PairOpBox extends CopyableBox {
     }
     
 }
+    
+return PairOpBox;
+    
+});
 
+
+define('list-op-box', function(require) {
+    
+var CopyableBox = require('copyable-box');
+var AbstractedGroup = require('abstracted-group');
+    
 class ListOpBox extends CopyableBox {
     constructor(label) {
         super(false);
@@ -260,3 +337,7 @@ class ListOpBox extends CopyableBox {
     }
     
 }
+    
+return ListOpBox;
+    
+});

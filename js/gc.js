@@ -1,3 +1,12 @@
+define(function(require) {
+    
+var Group = require('group');
+var Contract = require('nodes/contract');
+var Promo = require('nodes/promo');
+var Recur = require('nodes/recur');
+var Abs = require('nodes/abs');
+var Weak = require('nodes/weak');
+    
 class GC {
 
 	constructor(graph) {
@@ -46,3 +55,7 @@ class GC {
 		}
 	}
 }
+    
+return GC;
+    
+});

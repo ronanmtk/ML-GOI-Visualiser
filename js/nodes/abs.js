@@ -1,3 +1,15 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var RewriteFlag = require('token').RewriteFlag();
+var TransitionFlag = require('token').TransitionFlag();
+var RedrawFlag = require('token').RedrawFlag();
+var App = require('nodes/app');
+var Expo = require('nodes/expo');
+var Promo = require('nodes/promo');
+var Const = require('nodes/const');
+
 class Abs extends Node {
 
 	constructor(redrawFlag) {
@@ -95,4 +107,12 @@ class Abs extends Node {
         newAbs.transitionFlag = this.transitionFlag;
         return newAbs;
 	}
+    
+    isAbs() {
+        return true;
+    }
 }
+    
+return Abs;
+    
+});

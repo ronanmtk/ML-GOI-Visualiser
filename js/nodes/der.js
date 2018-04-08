@@ -1,3 +1,7 @@
+define('nodes/der', function(require) {
+
+var Expo = require('nodes/expo');
+    
 class Der extends Expo {
 
 	constructor(name, redrawFlag) {
@@ -34,6 +38,16 @@ class Der extends Expo {
 	}
 }
 
+return Der;
+    
+});
+
+define('nodes/var', function(require) {
+
+var Der = require('nodes/der');
+var Expo = require('nodes/expo');
+var Abs = require('nodes/abs');
+    
 class Var extends Der {
 
 	deleteAndPreserveOutLink() { 
@@ -50,3 +64,7 @@ class Var extends Der {
 	}
 
 }
+   
+return Var;
+    
+});

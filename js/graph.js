@@ -1,3 +1,9 @@
+define(function(require) {
+    
+var Group = require('group');
+var Link = require('link');
+var GraphShot = require('graph-shot');
+
 // general graph
 class Graph {
 	
@@ -81,3 +87,7 @@ class Graph {
         return snapshot.display(hide);
 	}
 }
+
+return Graph;
+    
+});

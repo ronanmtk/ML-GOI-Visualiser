@@ -1,3 +1,8 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+
 class Const extends Node {
 
 	constructor(name, redrawFlag) {
@@ -17,3 +22,7 @@ class Const extends Node {
 		return new Const(this.name, this.redrawFlag);
 	}
 }
+   
+return Const;
+    
+});

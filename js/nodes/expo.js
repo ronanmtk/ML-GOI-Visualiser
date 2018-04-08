@@ -1,3 +1,7 @@
+define(function(require) {
+    
+var Node = require('node');
+
 class Expo extends Node {
 
 	constructor(redrawFlag, shape, text, name) {
@@ -33,3 +37,7 @@ class Expo extends Node {
 		super.delete();
 	}
 }
+    
+return Expo;
+    
+});

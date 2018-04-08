@@ -1,3 +1,10 @@
+define('term', function(require) {
+    
+var Group = require('group');
+var Link = require('link');
+var Pax = require('nodes/pax');
+var Contract = require('nodes/contract');
+    
 // specific group for a term in the calculus
 class Term extends Group {
 
@@ -56,7 +63,19 @@ class Term extends Group {
 		return newAuxs;
 	}
 }
+    
+return Term;
+    
+});
 
+
+define('box-wrapper', function(require) {
+    
+var Link = require('link');
+var Term = require('term');
+var Box = require('box');
+var Promo = require('nodes/promo');
+    
 // !-box 
 class BoxWrapper extends Term {
 
@@ -177,3 +196,7 @@ class BoxWrapper extends Term {
 		return str;
 	}
 }
+    
+return BoxWrapper;
+    
+});

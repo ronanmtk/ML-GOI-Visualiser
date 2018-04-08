@@ -1,3 +1,15 @@
+define(function(require) {
+    
+var CompData = require('token').CompData();
+var RewriteFlag = require('token').RewriteFlag();
+var TransitionFlag = require('token').TransitionFlag();
+var RedrawFlag = require('token').RedrawFlag();
+var Term = require('term');
+var Link = require('link');
+var Expo = require('nodes/expo');
+var Der = require('nodes/der');
+var Contract = require('nodes/contract');
+
 class Promo extends Expo {
 
 	constructor(redrawFlag) {
@@ -14,7 +26,7 @@ class Promo extends Expo {
             token.redraw = false;
             var otherEnd = this.graph.findNodeByKey(link.to);
             if (otherEnd.redrawFlag == this.redrawFlag) {
-                if (otherEnd instanceof Abs) {
+                if (otherEnd.isAbs()) {
                     if(otherEnd.transitionFlag == TransitionFlag.LISTENTER) {
                         otherEnd.transitionFlag = TransitionFlag.NONE; //use once
                         this.transitionFlag = TransitionFlag.LISTEXIT;
@@ -86,3 +98,7 @@ class Promo extends Expo {
 		return new Promo(this.redrawFlag);
 	}
 }
+    
+return Promo;
+    
+});

@@ -1,3 +1,9 @@
+define('abstracted-group', function(require) {
+
+var SubGraph = require('subgraph');
+var Pax = require('nodes/pax');
+var Contract = require('nodes/contract');
+
 class AbstractedGroup extends SubGraph { //for any group that remains closed instead of displaying contents
     constructor(level, label, shape, root, key, group) {
         super();
@@ -68,3 +74,7 @@ class AbstractedGroup extends SubGraph { //for any group that remains closed ins
         }   
     }
 }
+    
+return AbstractedGroup;
+    
+});

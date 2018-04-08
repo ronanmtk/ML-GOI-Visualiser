@@ -7,6 +7,18 @@ requirejs.config({
 	//config is relative to the baseUrl, and
 	//never includes a ".js" extension since
 	//the paths config could be for a directory.
+    bundles: {
+        'parser/ast': ['ast/abstraction', 'ast/application', 'ast/identifier'
+        			 , 'ast/constant', 'ast/operation', 'ast/unary-op'
+                     , 'ast/binary-op', 'ast/if-then-else', 'ast/pair'
+                     , 'ast/pair-op', 'ast/recursion', 'ast/list'
+                     , 'ast/empty-list', 'ast/cons', 'ast/list-op'],
+        'group': ['group', 'displayed-group', 'box'
+                , 'copyable-box', 'pair-box', 'empty-list-box'
+                , 'cons-box', 'pair-op-box', 'list-op-box'],
+        'term': ['term', 'box-wrapper'],
+        'nodes/der': ['nodes/der', 'nodes/var'],
+    },
 	paths: {
 		d3: '../bower_components/d3/d3',
 		"dot-checker": '../bower_components/graphviz-d3-renderer/dist/dot-checker',

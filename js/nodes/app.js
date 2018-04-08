@@ -1,3 +1,10 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var TransitionFlag = require('token').TransitionFlag();
+var RedrawFlag = require('token').RedrawFlag();
+
 class App extends Node {
 
 	constructor(redrawFlag) {
@@ -38,3 +45,7 @@ class App extends Node {
 		return new App(this.redrawFlag);
 	}
 }
+    
+return App;
+    
+});

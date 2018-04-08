@@ -1,3 +1,7 @@
+define(function(require) {
+    
+var Expo = require('nodes/expo');
+
 class Pax extends Expo {
 
 	constructor(name, redrawFlag) {
@@ -20,3 +24,7 @@ class Pax extends Expo {
 		super.delete();
 	}
 }
+   
+return Pax;    
+
+});

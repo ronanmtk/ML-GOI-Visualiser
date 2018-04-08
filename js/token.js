@@ -1,4 +1,49 @@
+define(function(require) {
+    
+var CompData = {
+	PROMPT: '*',
+	LAMBDA: 'λ',
+	R: '@',
+}
+
+var RewriteFlag = {
+	EMPTY: '□',
+	F_LAMBDA: '<λ>',
+	F_OP: '<$>',
+	F_IF: '<if>',
+	F_C: '<C>',
+	F_PROMO: '<!>',
+	F_RECUR: '<μ>',
+}
+
+var RedrawFlag = {
+    NONE: 0,
+    INPAIR: 1,
+    INOP: 2,
+    INLIST: 3,
+    INLISTOP: 4,
+    INLISTISNIL: 5
+}
+
+var TransitionFlag = {
+    NONE: 0,
+    OPEXIT: 1,
+    LISTENTER: 2,
+    LISTEXIT: 3,
+    ISNILEXIT: 4,
+    LISTOPENTER: 5,
+    LISTOPEXIT: 6
+}
+
 class MachineToken {
+    
+    static CompData() { return CompData; }
+
+    static RewriteFlag() { return RewriteFlag; }
+    
+    static RedrawFlag() { return RedrawFlag; }
+    
+    static TransitionFlag() { return TransitionFlag; }
 
 	constructor() {
 		this.reset();
@@ -81,22 +126,6 @@ class MachineToken {
     }
 }
 
-var CompData = {
-	PROMPT: '*',
-	LAMBDA: 'λ',
-	R: '@',
-}
+return MachineToken;
 
-var RewriteFlag = {
-	EMPTY: '□',
-	F_LAMBDA: '<λ>',
-	F_OP: '<$>',
-	F_IF: '<if>',
-	F_C: '<C>',
-	F_PROMO: '<!>',
-	F_RECUR: '<μ>',
-}
-
-var BoxData = {
-}
-
+});

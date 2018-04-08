@@ -1,3 +1,7 @@
+define('closable-group', function(require) {
+    
+var SubGraph = require('subgraph');
+
 class ClosableGroup extends SubGraph {
     constructor(level, root, key, group) {
         super();
@@ -73,3 +77,7 @@ class ClosableGroup extends SubGraph {
         }
     }
 }
+    
+return ClosableGroup;
+    
+});

@@ -1,3 +1,5 @@
+define(function(require) {
+
 var UnOpType = {
 	Not: 0,
 }
@@ -15,3 +17,12 @@ var BinOpType = {
     Gte: 8,
     Eq: 9
 }
+
+var OpType = {
+    UnOpType: UnOpType,
+    BinOpType: BinOpType
+}
+
+return OpType;
+
+});

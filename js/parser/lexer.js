@@ -1,3 +1,7 @@
+define(function(require) {
+    
+var Token = require('parser/token');
+    
 class Lexer {
   constructor(input, output) {
     this._input = input;
@@ -289,3 +293,7 @@ class Lexer {
     return false;
   }
 }
+    
+return Lexer;
+    
+});

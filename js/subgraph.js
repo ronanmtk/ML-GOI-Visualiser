@@ -1,3 +1,5 @@
+define('subgraph', function(require) { 
+
 class SubGraph {
     constructor() {
         this.templateMarker = "%%%";
@@ -74,3 +76,7 @@ class SubGraph {
     }
     
 }
+    
+return SubGraph;
+    
+});

@@ -1,3 +1,15 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var RewriteFlag = require('token').RewriteFlag();
+var RedrawFlag = require('token').RedrawFlag();
+var Link = require('link');
+var BoxWrapper = require('box-wrapper');
+var Promo = require('nodes/promo');
+var Const = require('nodes/const');
+var UnOpType = require('op').UnOpType;
+
 class UnOp extends Node {
 
 	constructor(text, redrawFlag) {
@@ -67,3 +79,7 @@ class UnOp extends Node {
 	}
 
 }
+   
+return UnOp;
+    
+});

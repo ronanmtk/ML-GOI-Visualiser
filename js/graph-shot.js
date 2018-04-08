@@ -1,3 +1,7 @@
+define('graph-shot', function(require) {
+    
+var SubGraph = require('subgraph');
+
 class GraphShot extends SubGraph {
     constructor(graph, width, height) {
         super();
@@ -93,3 +97,7 @@ class GraphShot extends SubGraph {
         return finalDot + "\n}";
     }
 }
+    
+return GraphShot;
+    
+});

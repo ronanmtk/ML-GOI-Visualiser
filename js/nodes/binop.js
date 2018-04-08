@@ -1,3 +1,14 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var RewriteFlag = require('token').RewriteFlag();
+var Link = require('link');
+var BoxWrapper = require('box-wrapper');
+var Promo = require('nodes/promo');
+var Const = require('nodes/const');
+var BinOpType = require('op').BinOpType;
+
 class BinOp extends Node {
 
 	constructor(text, redrawFlag) {
@@ -103,3 +114,7 @@ class BinOp extends Node {
 	}
     
 }
+   
+return BinOp;
+    
+});

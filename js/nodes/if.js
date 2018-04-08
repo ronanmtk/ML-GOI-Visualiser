@@ -1,3 +1,12 @@
+define(function(require) {
+    
+var Node = require('node');
+var CompData = require('token').CompData();
+var RewriteFlag = require('token').RewriteFlag();
+var RedrawFlag = require('token').RedrawFlag();
+var Promo = require('nodes/promo');
+var Weak = require('nodes/weak');
+
 class If extends Node {
 
 	constructor(redrawFlag) {
@@ -58,3 +67,7 @@ class If extends Node {
 		return new If(this.redrawFlag);
 	}
 }
+   
+return If;    
+    
+});

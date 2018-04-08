@@ -1,3 +1,8 @@
+define(function(require) {
+    
+var Node = require('node');
+var Expo = require('nodes/expo');
+
 class Weak extends Expo {
 
 	constructor(name,redrawFlag) {
@@ -9,3 +14,7 @@ class Weak extends Expo {
 	}
 	
 }
+    
+return Weak;
+    
+});
